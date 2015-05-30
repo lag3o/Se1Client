@@ -42,7 +42,7 @@ public class SessionList extends ActionBarActivity {
 
         //Daten abfragen
         list= ms.getAl();
-        list = datasource.getSessions(id);
+      //  list = datasource.getSessions(id);
 
         //ListViewAdapter initialisieren
         ListViewAdapter adapter=new ListViewAdapter(this, list);
