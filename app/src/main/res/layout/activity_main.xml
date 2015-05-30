@@ -1,0 +1,61 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="0dp"
+        android:layout_weight="0.5"
+        android:adjustViewBounds="true"
+        android:padding="20dp"
+        android:id="@+id/events_list"
+        android:src="@mipmap/xx_events"
+        android:background="@android:color/transparent"
+        android:visibility="visible"
+        android:layout_below="@+id/nickname"
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="0dp"
+        android:layout_weight="0.5"
+        android:adjustViewBounds="true"
+        android:padding="20dp"
+        android:scaleType="fitCenter"
+        android:id="@+id/myEvents"
+        android:src="@mipmap/xx_goldenstar"
+        android:background="@android:color/transparent"
+        android:visibility="visible"
+        android:layout_above="@+id/nickname"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:text="Name"
+        android:ems="10"
+        android:id="@+id/nickname"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Registrieren"
+        android:id="@+id/saveNick"
+        android:layout_alignBottom="@+id/events_list"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
