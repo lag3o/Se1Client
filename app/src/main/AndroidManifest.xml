@@ -52,10 +52,26 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.se1.gruppe2.projecto.MainActivity" />
         </activity>
+
+        <receiver
+            android:name="org.jboss.aerogear.android.unifiedpush.gcm.GCMMes"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.push.pushapplication" />
+            </intent-filter>
+            <meta-data android:name="DEFAULT_MESSAGE_HANDLER_KEY" android:value="com.push.pushapplication.NotifyingHandler"/>
+        </receiver>
+
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <permission
+        android:name="ccom.se1.gruppe2.projecto.MainActivity.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.push.pushapplication.permission.C2D_MESSAGE" />
 
 </manifest>
