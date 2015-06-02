@@ -3,8 +3,8 @@ package com.se1.gruppe2.projecto;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,11 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import com.example.myles.projecto.R;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
     public ImageButton bt;
     public ImageButton imbt;
     public Button btsave;
@@ -27,6 +26,9 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
         setContentView(R.layout.activity_main);
         DatabaseHandler database = new DatabaseHandler(this);
 
@@ -84,6 +86,8 @@ public class MainActivity extends ActionBarActivity {
                     b.putInt("ID", 1); //Your id
                     intent.putExtras(b); //Put your id to your next Intent
                     startActivity(intent);
+                    // Aufruf zur PushService Registrierung
+                    //registerDeviceOnPushServer(userName.getText().toString());
                 }
             });
         }
@@ -115,4 +119,4 @@ public class MainActivity extends ActionBarActivity {
 
                 return super.onOptionsItemSelected(item);
             }
-        }
+}
