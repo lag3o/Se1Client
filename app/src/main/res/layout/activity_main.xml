@@ -18,7 +18,7 @@
         android:id="@+id/events_list"
         android:src="@mipmap/xx_events"
         android:background="@android:color/transparent"
-        android:visibility="visible"
+        android:visibility="invisible"
         android:layout_below="@+id/nickname"
         android:layout_centerHorizontal="true" />
 
@@ -36,7 +36,7 @@
         android:id="@+id/myEvents"
         android:src="@mipmap/xx_goldenstar"
         android:background="@android:color/transparent"
-        android:visibility="visible"
+        android:visibility="invisible"
         android:layout_above="@+id/nickname"
         android:layout_centerHorizontal="true" />
 

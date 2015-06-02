@@ -13,27 +13,25 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.myles.projecto.R;
-import com.se1.gruppe2.mock.MockEvents;
 
 import java.util.ArrayList;
 
 
-public class myEvents extends ActionBarActivity {
+public class MyEvents extends ActionBarActivity {
 
     private Button bt;
     private ListView al;
     private ArrayList<String> activityArr;
     private ArrayAdapter<String> arrAdap;
     private TextView tv;
-    private MockEvents server;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events_list);
         al = (ListView) findViewById(R.id.activityList);
-        server = new MockEvents();
-        activityArr = server.getAl();
+
+
         arrAdap = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, activityArr);
         al.setAdapter(arrAdap);
         arrAdap.notifyDataSetChanged();
@@ -41,7 +39,7 @@ public class myEvents extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
 
-                Intent intent = new Intent(myEvents.this, SessionList.class);
+                Intent intent = new Intent(MyEvents.this, SessionList.class);
                 Bundle b = new Bundle();
                 b.putInt("ID", position); //Your id
                 intent.putExtras(b); //Put your id to your next Intent

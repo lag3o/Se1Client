@@ -1,22 +1,75 @@
 package com.se1.gruppe2.projecto;
 
+import android.content.Context;
+import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
+
+
+import static com.se1.gruppe2.projecto.Constants.NAME;
+import static com.se1.gruppe2.projecto.Constants.START;
+import static com.se1.gruppe2.projecto.Constants.LOC;
+import static com.se1.gruppe2.projecto.Constants.DESCR;
 
 import com.example.myles.projecto.R;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 public class SessionView extends ActionBarActivity {
+    private static double longitude;
+    private static double latitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_session_view);
         Bundle b = getIntent().getExtras();
-        ((TextView) findViewById(R.id.name)).setText(b.getString("Name"));
-        ((TextView) findViewById(R.id.time)).setText(b.getString("Time"));
+        ((TextView) findViewById(R.id.name)).setText(b.getString(NAME));
+        ((TextView) findViewById(R.id.time)).setText(b.getString(START));
+        ((TextView) findViewById(R.id.description)).setText(b.getString(DESCR));
+        ((TextView) findViewById(R.id.location)).setText(b.getString(LOC));
+
+        ImageButton btn = (ImageButton) findViewById(R.id.navigation);
+
+        List<Address> addresses = null;
+
+        try {
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+            addresses = geocoder.getFromLocationName(b.getString(LOC), 1);
+            if(addresses.size() > 0) {
+                latitude = addresses.get(0).getLatitude();
+                longitude = addresses.get(0).getLongitude();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        btn.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Uri gmmIntentUri = Uri.parse("geo:" + latitude + "," + longitude);
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+
+                if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(mapIntent);
+                }
+
+            }
+        });
     }
 
     @Override

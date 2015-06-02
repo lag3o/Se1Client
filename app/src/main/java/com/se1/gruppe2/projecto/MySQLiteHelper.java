@@ -11,29 +11,41 @@ package com.se1.gruppe2.projecto;
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
     public static final String TABLE_EVENTS = "events";
-    public static final String EVENT_ID = "_id";
+    public static final String EVENT_ID = "eventID";
     public static final String EVENT_NAME = "name";
+    public static final String EVENT_DATE_START = "start_date";
+    public static final String EVENT_DATE_END = "start_end";
+    public static final String EVENT_DESCRIPTION ="description";
 
     public static final String TABLE_SESSIONS = "sessions";
-    public static final String SESSION_ID = "_id";
+    public static final String SESSION_ID = "session_id";
     public static final String SESSION_NAME = "name";
     public static final String SESSION_DATE_START = "start_date";
-    public static final String SESSION_DATE_END = "start_end";
+    public static final String SESSION_DATE_END = "end_date";
     public static final String SESSION_LOCATION = "location";
     public static final String SESSION_DESCRIPTION ="description";
+    public static final String SESSION_FAV = "favourite";
 
-    private static final String DATABASE_NAME = "names.db";
+    private static final String DATABASE_NAME = "names.db"; // ÄNDERN!!!!!!
     private static final int DATABASE_VERSION = 1;
 
     // Database creation sql statement
-    private static final String DATABASE_CREATE = "create table "
+    private static final String DATABASE_EVENT = "create table "
             + TABLE_EVENTS + "(" + EVENT_ID
             + " integer primary key autoincrement, " + EVENT_NAME
-            + " text not null); create table "+ TABLE_SESSIONS +"(" + SESSION_ID
-            + " integer primary key autoincrement, " + SESSION_NAME
-            + " text not null)," + SESSION_DATE_START
-            + " text not null),"+ SESSION_DATE_END + SESSION_LOCATION
-            + " text not null),"+ SESSION_DESCRIPTION + ";";
+            + " text not null," + EVENT_DATE_START
+            + " text not null,"+ EVENT_DATE_END
+            + " text not null,"+ EVENT_DESCRIPTION
+            + " text not null);";
+    private static final String DATABASE_SESSION = " create table "
+            + TABLE_SESSIONS +"(" + SESSION_ID
+            + " integer primary key autoincrement, " + EVENT_ID
+            + " text not null," + SESSION_NAME
+            + " text not null," + SESSION_DATE_START
+            + " text not null,"+ SESSION_DATE_END
+            + " text not null," + SESSION_LOCATION
+            + " text not null,"+ SESSION_DESCRIPTION + " text," + SESSION_FAV +" integer);";
+
 
     public MySQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -41,7 +53,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase database) {
-        database.execSQL(DATABASE_CREATE);
+        database.execSQL(DATABASE_EVENT);
+        database.execSQL(DATABASE_SESSION);
     }
 
     @Override
@@ -50,6 +63,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 "Upgrading database from version " + oldVersion + " to "
                         + newVersion + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SESSIONS);
         onCreate(db);
     }
 

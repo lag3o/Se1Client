@@ -12,9 +12,11 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Veranstaltungsname"
         android:id="@+id/name"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/time"
+        android:layout_toStartOf="@+id/time" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -35,7 +37,8 @@
         android:layout_below="@+id/name"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="95dp" />
+        android:layout_marginTop="95dp"
+        android:layout_above="@+id/contact" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -54,7 +57,10 @@
         android:layout_alignBottom="@+id/location"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:src="@android:drawable/ic_dialog_map" />
+        android:src="@android:drawable/ic_dialog_map"
+        android:layout_alignLeft="@+id/time"
+        android:layout_alignStart="@+id/time"
+        android:background="@android:color/transparent" />
 
     <TextView
         android:layout_width="wrap_content"

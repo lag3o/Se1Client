@@ -10,42 +10,46 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.myles.projecto.R;
-import com.se1.gruppe2.mock.MockSessions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 
+import static com.se1.gruppe2.projecto.Constants.NAME;
+import static com.se1.gruppe2.projecto.Constants.START;
+import static com.se1.gruppe2.projecto.Constants.LOC;
+import static com.se1.gruppe2.projecto.Constants.DESCR;
 
 public class SessionList extends ActionBarActivity {
 
 
-    private ArrayList<HashMap<String, String>> list;
-    private MockSessions ms;
     private EventsDataSource datasource;
+    private static ArrayList<HashMap<String, String>> sessions;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_session_list);
 
         // ListView laden
-        ListView listView=(ListView)findViewById(R.id.listView1);
+        ListView listView=(ListView)findViewById(R.id.session_list);
 
         //Übergebene Parameter entpacken
         Bundle b = getIntent().getExtras();
-        Integer id = b.getInt("id");
+        Integer id = b.getInt("ID");
+
 
         //Datenbankverbindung aufbauen
-        ms = new MockSessions(id);
-        datasource = new EventsDataSource(this);
-        datasource.open();
+        //datasource = new EventsDataSource(this);
+        //datasource.open();
+        DatabaseHandler handler = ((DatabaseHandler) getApplicationContext());
+        datasource = (handler.getDatasource());
+
 
         //Daten abfragen
-        list= ms.getAl();
-        list = datasource.getSessions(id);
+        sessions = datasource.getSessions(id);
 
         //ListViewAdapter initialisieren
-        ListViewAdapter adapter=new ListViewAdapter(this, list);
+        ListViewAdapter adapter=new ListViewAdapter(this, sessions);
 
         //ListView befüllen
         listView.setAdapter(adapter);
@@ -56,11 +60,14 @@ public class SessionList extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id)
             {
-                int pos = position + 1;
+
+
                 Intent intent = new Intent(SessionList.this, SessionView.class);
                 Bundle b = new Bundle();
-                b.putString("Time", "18:00 Uhr");
-                b.putString("Name", "Test");
+                b.putString(START, (sessions.get(position).get(START)));
+                b.putString(LOC, (sessions.get(position).get(LOC)));
+                b.putString(NAME, (sessions.get(position).get(NAME)));
+                b.putString(DESCR, (sessions.get(position).get(DESCR)));
                 intent.putExtras(b); //Put your id to your next Intent
                 startActivity(intent);
             }

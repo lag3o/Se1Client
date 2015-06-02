@@ -2,9 +2,11 @@ package com.se1.gruppe2.projecto;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -13,8 +15,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.myles.projecto.R;
-
-import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -28,6 +28,9 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        DatabaseHandler database = new DatabaseHandler(this);
+
+
         btsave = (Button) findViewById(R.id.saveNick);
         userName = (EditText) findViewById(R.id.nickname);
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
@@ -47,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
             bt.setOnClickListener(new Button.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(MainActivity.this, myEvents.class);
+                    Intent intent = new Intent(MainActivity.this, MyEvents.class);
                     Bundle b = new Bundle();
                     b.putInt("ID", 1); //Your id
                     intent.putExtras(b); //Put your id to your next Intent
@@ -89,6 +92,11 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public boolean onCreateOptionsMenu(Menu menu) {
                 // Inflate the menu; this adds items to the action bar if it is present.
+                MenuInflater inflater = getMenuInflater();
+                inflater.inflate(R.menu.menu_main, menu);
+
+                ActionBar actionBar = getSupportActionBar();
+                actionBar.setLogo(R.mipmap.ic_majom);
                 getMenuInflater().inflate(R.menu.menu_main, menu);
                 return true;
             }

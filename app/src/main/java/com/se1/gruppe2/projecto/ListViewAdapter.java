@@ -3,9 +3,9 @@ package com.se1.gruppe2.projecto;
 /**
  * Created by myles on 17.05.15.
  */
-        import static com.se1.gruppe2.projecto.Constants.FIRST_COLUMN;
-        import static com.se1.gruppe2.projecto.Constants.SECOND_COLUMN;
-        import static com.se1.gruppe2.projecto.Constants.THIRD_COLUMN;
+        import static com.se1.gruppe2.projecto.Constants.NAME;
+        import static com.se1.gruppe2.projecto.Constants.START;
+        import static com.se1.gruppe2.projecto.Constants.LOC;
 
         import java.util.ArrayList;
         import java.util.HashMap;
@@ -56,14 +56,14 @@ public class ListViewAdapter extends BaseAdapter{
         LayoutInflater inflater=activity.getLayoutInflater();
         if(convertView == null){
             convertView=inflater.inflate(R.layout.layout_multi_column, null);
-            txtFirst=(TextView) convertView.findViewById(R.id.time);
-            txtSecond=(TextView) convertView.findViewById(R.id.session);
-            txtThird=(TextView) convertView.findViewById(R.id.location);
+            txtFirst=(TextView) convertView.findViewById(R.id.first);
+            txtSecond=(TextView) convertView.findViewById(R.id.second);
+            txtThird=(TextView) convertView.findViewById(R.id.last);
         }
         HashMap<String, String> map=list.get(position);
-        txtFirst.setText(map.get(FIRST_COLUMN));
-        txtSecond.setText(map.get(SECOND_COLUMN));
-        txtThird.setText(map.get(THIRD_COLUMN));
+        txtFirst.setText(map.get(START));
+        txtSecond.setText(map.get(NAME));
+        txtThird.setText(map.get(LOC));
         return convertView;
     }
 

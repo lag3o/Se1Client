@@ -1,11 +1,12 @@
 <resources>
-    <string name="app_name">ProjectO</string>
+    <string name="app_name">Majom Events</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_activity_list">ActivityList</string>
     <string name="title_activity_events_list">Veranstaltungen</string>
     <string name="title_activity_session_list">Ablaufplan</string>
     <string name="title_activity_session_view">Detailansicht</string>
     <string name="title_activity_my_events">Meine Veranstaltungen</string>
+    <string name="title_activity_create_event">Veranstaltung erstellen</string>
+    <string name="title_activity_create_session">Termin erstellen</string>
 </resources>

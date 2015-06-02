@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.myles.projecto" >
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:name="com.se1.gruppe2.projecto.DatabaseHandler"
+        android:logo="@mipmap/ic_majom">
         <activity
             android:name="com.se1.gruppe2.projecto.MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,8 +21,8 @@
         <activity
             android:name="com.se1.gruppe2.projecto.EventsList"
             android:label="@string/title_activity_events_list"
-            android:parentActivityName="com.se1.gruppe2.projecto.MainActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:parentActivityName="com.se1.gruppe2.projecto.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.se1.gruppe2.projecto.MainActivity" />
@@ -28,30 +30,47 @@
         <activity
             android:name="com.se1.gruppe2.projecto.SessionList"
             android:label="@string/title_activity_session_list"
-            android:parentActivityName="com.se1.gruppe2.projecto.myEvents"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:parentActivityName="com.se1.gruppe2.projecto.MyEvents" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.se1.gruppe2.projecto.myEvents" />
+                android:value="com.se1.gruppe2.projecto.MyEvents" />
         </activity>
         <activity
             android:name="com.se1.gruppe2.projecto.SessionView"
             android:label="@string/title_activity_session_view"
-            android:parentActivityName="com.se1.gruppe2.projecto.SessionList"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:parentActivityName="com.se1.gruppe2.projecto.SessionList" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.se1.gruppe2.projecto.SessionList" />
         </activity>
         <activity
-            android:name="com.se1.gruppe2.projecto.myEvents"
+            android:name="com.se1.gruppe2.projecto.MyEvents"
             android:label="@string/title_activity_my_events"
-            android:parentActivityName="com.se1.gruppe2.projecto.MainActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:parentActivityName="com.se1.gruppe2.projecto.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.se1.gruppe2.projecto.MainActivity" />
         </activity>
+        <activity
+            android:name="com.se1.gruppe2.projecto.CreateEvent"
+            android:label="@string/title_activity_create_event"
+            android:parentActivityName="com.se1.gruppe2.projecto.EventsList" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.se1.gruppe2.projecto.EventsList" />
+        </activity>
+        <activity
+            android:name="com.se1.gruppe2.projecto.CreateSession"
+            android:label="@string/title_activity_create_session"
+            android:parentActivityName="com.se1.gruppe2.projecto.EventsList" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.se1.gruppe2.projecto.EventsList" />
+        </activity>
     </application>
+
 
 </manifest>
