@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.myles.projecto" >
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission
+        android:name="com.gruppe2.Event.Activity.MainActivity.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.push.pushapplication.permission.C2D_MESSAGE" />
 
     <application
+        android:name="com.gruppe2.Event.Database.DatabaseHandler"
         android:allowBackup="true"
+        android:icon="@mipmap/ic_majom"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:name="com.se1.gruppe2.projecto.DatabaseHandler"
-        android:logo="@mipmap/ic_majom">
+        android:logo="@mipmap/ic_majom"
+        android:theme="@style/AppTheme" >
         <activity
-            android:name="com.se1.gruppe2.projecto.MainActivity"
+            android:name="com.gruppe2.Event.Activity.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,61 +30,78 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.se1.gruppe2.projecto.EventsList"
+            android:name="com.gruppe2.Event.Activity.EventsList"
             android:label="@string/title_activity_events_list"
             android:launchMode="singleTop"
-            android:parentActivityName="com.se1.gruppe2.projecto.MainActivity" >
+            android:parentActivityName="com.gruppe2.Event.Activity.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.se1.gruppe2.projecto.MainActivity" />
+                android:value="com.gruppe2.Event.Activity.MainActivity" />
         </activity>
         <activity
-            android:name="com.se1.gruppe2.projecto.SessionList"
+            android:name="com.gruppe2.Event.Activity.SessionList"
             android:label="@string/title_activity_session_list"
             android:launchMode="singleTop"
-            android:parentActivityName="com.se1.gruppe2.projecto.MyEvents" >
+            android:parentActivityName="com.gruppe2.Event.Activity.MyEvents" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.se1.gruppe2.projecto.MyEvents" />
+                android:value="com.gruppe2.Event.Activity.MyEvents" />
         </activity>
         <activity
-            android:name="com.se1.gruppe2.projecto.SessionView"
+            android:name="com.gruppe2.Event.Activity.SessionView"
             android:label="@string/title_activity_session_view"
             android:launchMode="singleTop"
-            android:parentActivityName="com.se1.gruppe2.projecto.SessionList" >
+            android:parentActivityName="com.gruppe2.Event.Activity.SessionList" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.se1.gruppe2.projecto.SessionList" />
+                android:value="com.gruppe2.Event.Activity.SessionList" />
         </activity>
         <activity
-            android:name="com.se1.gruppe2.projecto.MyEvents"
+            android:name="com.gruppe2.Event.Activity.MyEvents"
             android:label="@string/title_activity_my_events"
             android:launchMode="singleTop"
-            android:parentActivityName="com.se1.gruppe2.projecto.MainActivity" >
+            android:parentActivityName="com.gruppe2.Event.Activity.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.se1.gruppe2.projecto.MainActivity" />
+                android:value="com.gruppe2.Event.Activity.MainActivity" />
         </activity>
+        <activity
+            android:name="com.gruppe2.Event.Activity.CreateEvent"
+            android:label="@string/title_activity_create_event"
+            android:launchMode="singleTop"
+            android:parentActivityName="com.gruppe2.Event.Activity.MyEvents" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.gruppe2.Event.Activity.MyEvents" />
+        </activity>
+        <activity
+            android:name="com.gruppe2.Event.Activity.CreateSession"
+            android:label="@string/title_activity_create_session"
+            android:launchMode="singleTop"
+            android:parentActivityName="com.gruppe2.Event.Activity.MyEvents" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.gruppe2.Event.Activity.MyEvents" />
+        </activity>
+
         <receiver
             android:name="org.jboss.aerogear.android.unifiedpush.gcm.GCMMes"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
                 <category android:name="com.push.pushapplication" />
             </intent-filter>
-            <meta-data android:name="DEFAULT_MESSAGE_HANDLER_KEY" android:value="com.push.pushapplication.NotifyingHandler"/>
+
+            <meta-data
+                android:name="DEFAULT_MESSAGE_HANDLER_KEY"
+                android:value="com.push.pushapplication.NotifyingHandler" />
         </receiver>
 
+        <activity
+            android:name="com.gruppe2.Event.Activity.EditSession"
+            android:label="@string/title_activity_edit_session" >
+        </activity>
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <permission
-        android:name="ccom.se1.gruppe2.projecto.MainActivity.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-
-    <uses-permission android:name="com.push.pushapplication.permission.C2D_MESSAGE" />
-
 
 </manifest>

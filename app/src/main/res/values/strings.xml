@@ -9,4 +9,8 @@
     <string name="title_activity_my_events">Meine Veranstaltungen</string>
     <string name="title_activity_create_event">Veranstaltung erstellen</string>
     <string name="title_activity_create_session">Termin erstellen</string>
+    <string name="title_activity_soaptest">SOAPTest</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_edit_session">Termin bearbeiten</string>
 </resources>

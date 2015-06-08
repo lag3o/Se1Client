@@ -4,7 +4,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.se1.gruppe2.projecto.SessionList">
+    tools:context="com.gruppe2.Event.Activity.SessionList">
 
     <ListView
         android:id="@+id/listView1"

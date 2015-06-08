@@ -5,19 +5,19 @@
 
     <TextView
         android:id="@+id/first"
-        android:layout_height="wrap_content"
+        android:layout_height="55dp"
         android:layout_width="0dp"
         android:layout_weight="2"
         android:textStyle="bold" />
     <TextView
         android:id="@+id/second"
-        android:layout_height="wrap_content"
+        android:layout_height="55dp"
         android:layout_width="0dp"
         android:layout_weight="10" />
 
     <TextView
         android:id="@+id/last"
-        android:layout_height="wrap_content"
+        android:layout_height="55dp"
         android:layout_width="0dp"
         android:layout_weight="4" />
 
