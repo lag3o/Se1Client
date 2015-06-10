@@ -41,6 +41,5 @@ public interface InterEvent {
         public ArrayList<Session> getSessions();
         public void setSessions(ArrayList<Session> sessions);
         public void addSessions(Session session);
-    }
-
 }
+
