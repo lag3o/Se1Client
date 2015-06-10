@@ -8,20 +8,20 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <permission
-        android:name="com.gruppe2.Event.Activity.MainActivity.C2D_MESSAGE"
+        android:name="com.gruppe2.Client.Activity.MainActivity.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
     <uses-permission android:name="com.push.pushapplication.permission.C2D_MESSAGE" />
 
     <application
-        android:name="com.gruppe2.Event.Database.DatabaseHandler"
+        android:name="com.gruppe2.Client.Database.DatabaseHandler"
         android:allowBackup="true"
         android:icon="@mipmap/ic_majom"
         android:label="@string/app_name"
         android:logo="@mipmap/ic_majom"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.gruppe2.Event.Activity.MainActivity"
+            android:name="com.gruppe2.Client.Activity.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,58 +30,58 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.gruppe2.Event.Activity.EventsList"
+            android:name="com.gruppe2.Client.Activity.EventsList"
             android:label="@string/title_activity_events_list"
             android:launchMode="singleTop"
-            android:parentActivityName="com.gruppe2.Event.Activity.MainActivity" >
+            android:parentActivityName="com.gruppe2.Client.Activity.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.gruppe2.Event.Activity.MainActivity" />
+                android:value="com.gruppe2.Client.Activity.MainActivity" />
         </activity>
         <activity
-            android:name="com.gruppe2.Event.Activity.SessionList"
+            android:name="com.gruppe2.Client.Activity.SessionList"
             android:label="@string/title_activity_session_list"
             android:launchMode="singleTop"
-            android:parentActivityName="com.gruppe2.Event.Activity.MyEvents" >
+            android:parentActivityName="com.gruppe2.Client.Activity.MyEvents" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.gruppe2.Event.Activity.MyEvents" />
+                android:value="com.gruppe2.Client.Activity.MyEvents" />
         </activity>
         <activity
-            android:name="com.gruppe2.Event.Activity.SessionView"
+            android:name="com.gruppe2.Client.Activity.SessionView"
             android:label="@string/title_activity_session_view"
             android:launchMode="singleTop"
-            android:parentActivityName="com.gruppe2.Event.Activity.SessionList" >
+            android:parentActivityName="com.gruppe2.Client.Activity.SessionList" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.gruppe2.Event.Activity.SessionList" />
+                android:value="com.gruppe2.Client.Activity.SessionList" />
         </activity>
         <activity
-            android:name="com.gruppe2.Event.Activity.MyEvents"
+            android:name="com.gruppe2.Client.Activity.MyEvents"
             android:label="@string/title_activity_my_events"
             android:launchMode="singleTop"
-            android:parentActivityName="com.gruppe2.Event.Activity.MainActivity" >
+            android:parentActivityName="com.gruppe2.Client.Activity.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.gruppe2.Event.Activity.MainActivity" />
+                android:value="com.gruppe2.Client.Activity.MainActivity" />
         </activity>
         <activity
-            android:name="com.gruppe2.Event.Activity.CreateEvent"
+            android:name="com.gruppe2.Client.Activity.CreateEvent"
             android:label="@string/title_activity_create_event"
             android:launchMode="singleTop"
-            android:parentActivityName="com.gruppe2.Event.Activity.MyEvents" >
+            android:parentActivityName="com.gruppe2.Client.Activity.MyEvents" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.gruppe2.Event.Activity.MyEvents" />
+                android:value="com.gruppe2.Client.Activity.MyEvents" />
         </activity>
         <activity
-            android:name="com.gruppe2.Event.Activity.CreateSession"
+            android:name="com.gruppe2.Client.Activity.CreateSession"
             android:label="@string/title_activity_create_session"
             android:launchMode="singleTop"
-            android:parentActivityName="com.gruppe2.Event.Activity.MyEvents" >
+            android:parentActivityName="com.gruppe2.Client.Activity.MyEvents" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.gruppe2.Event.Activity.MyEvents" />
+                android:value="com.gruppe2.Client.Activity.MyEvents" />
         </activity>
 
         <receiver
@@ -99,7 +99,7 @@
         </receiver>
 
         <activity
-            android:name="com.gruppe2.Event.Activity.EditSession"
+            android:name="com.gruppe2.Client.Activity.EditSession"
             android:label="@string/title_activity_edit_session" >
         </activity>
     </application>
