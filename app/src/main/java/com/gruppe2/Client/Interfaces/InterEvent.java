@@ -19,9 +19,9 @@ public interface InterEvent {
         //private Integer userID;
 
 
-        public Integer getId();
+        public Integer getEventID();
 
-        public void setID(Integer id) throws ParamMissingException;
+        public void setEventID(Integer id) throws ParamMissingException;
 
         public String getName();
 

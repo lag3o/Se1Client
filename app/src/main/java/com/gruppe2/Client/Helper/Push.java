@@ -16,7 +16,7 @@ import java.util.Arrays;
 /**@author Malte Lange
 Erzeugt eine PushMitteilung
  */
-public class Push  extends DatabaseHandler {
+public class Push {
 
 
 

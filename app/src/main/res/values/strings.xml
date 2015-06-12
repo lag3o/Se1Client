@@ -13,4 +13,5 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_edit_session">Termin bearbeiten</string>
+    <string name="title_activity_event_view">EventView</string>
 </resources>

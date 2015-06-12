@@ -3,6 +3,7 @@ package com.gruppe2.Client.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.provider.ContactsContract;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
             else if (datasource.isActive()!= null){
-                Intent intent = new Intent(MainActivity.this, SessionList.class);
+                Intent intent = new Intent(MainActivity.this, EventView.class);
                 Bundle b = new Bundle();
                 b.putInt("ID", datasource.isActive()); //Your id
                 intent.putExtras(b); //Put your id to your next Intent
@@ -142,8 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             // Aufruf zur PushService Registrierung
-            Push push = ((Push) getApplicationContext());
-            push.registerDeviceOnPushServer(userName.getText().toString(), this);
+            ((DatabaseHandler) getApplicationContext()).push.registerDeviceOnPushServer(userName.getText().toString(), this);
 
         } catch (Exception e) {
             e.printStackTrace();

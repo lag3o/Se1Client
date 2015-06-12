@@ -32,18 +32,19 @@ import static com.gruppe2.Client.Helper.Constants.DESCR;
  */
 public class CreateSession extends AppCompatActivity {
 
-    public Event event = null;
+    private Bundle b;
+    private Event event = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_session);
 
-        Bundle b = getIntent().getExtras();
+        b = getIntent().getExtras();
         try{
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
             simpleDateFormat.setLenient(false);
-            Date end = simpleDateFormat.parse(b.getString(END));
-            Date start = simpleDateFormat.parse(b.getString(START));
+            Date end = simpleDateFormat.parse((b.getString(END) + " 23:59"));
+            Date start = simpleDateFormat.parse((b.getString(START) + " 00:00"));
 
             event = new Event(b.getString(NAME), start, end, b.getString(DESCR));
         }
@@ -69,7 +70,7 @@ public class CreateSession extends AppCompatActivity {
                     // ID zuweisen
                     try {
                         int id = datasource.countEvents();
-                        event.setID(id);
+                        event.setEventID(id);
                     }
                     catch (ParamMissingException e){}
 
@@ -89,10 +90,10 @@ public class CreateSession extends AppCompatActivity {
         Session session;
         try {
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
             simpleDateFormat.setLenient(false);
-            Date start = simpleDateFormat.parse(((EditText) findViewById(R.id.txtStartDate)).getText().toString());
-            Date end = simpleDateFormat.parse(((EditText) findViewById(R.id.txtEndDate)).getText().toString());
+            Date start = simpleDateFormat.parse(b.getString(START) + " " + (((EditText) findViewById(R.id.txtStartDate)).getText().toString()));
+            Date end = simpleDateFormat.parse(b.getString(END) + " " +(((EditText) findViewById(R.id.txtEndDate)).getText().toString()));
 
             if (start == null || end == null){
                 throw new ParamMissingException("Anfangs- und/oder Endzeit");

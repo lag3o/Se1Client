@@ -47,7 +47,7 @@ public class EditSession extends AppCompatActivity {
             Date start = simpleDateFormat.parse(b.getString(START));
             String name = b.getString(NAME);
             event = new Event(b.getString(NAME), start, end, b.getString(DESCR));
-            event.setID(b.getInt("ID"));
+            event.setEventID(b.getInt("ID"));
             EventsDataSource datasource = ((DatabaseHandler) getApplicationContext()).datasource;
             event.setSessions(datasource.getSessions(b.getInt("ID")));
             datasource.deleteEvent(event);
@@ -162,8 +162,8 @@ public class EditSession extends AppCompatActivity {
     private void updateTextFields(Session session){
 
         ((EditText) findViewById(R.id.txtName)).setText(session.getName());
-        ((EditText) findViewById(R.id.txtEndDate)).setText((new Parser().TimeToString(session.getDateEnd())));
-        ((EditText) findViewById(R.id.txtStartDate)).setText((new Parser().TimeToString(session.getDateStart())));
+        ((EditText) findViewById(R.id.txtEndDate)).setText((new Parser().DateToString(session.getDateEnd())));
+        ((EditText) findViewById(R.id.txtStartDate)).setText((new Parser().DateToString(session.getDateStart())));
         ((EditText) findViewById(R.id.txtAdress)).setText(session.getLocation());
         ((EditText) findViewById(R.id.txtPLZ)).setText(session.getPlz());
         ((EditText) findViewById(R.id.txtDescription)).setText(session.getDescription());

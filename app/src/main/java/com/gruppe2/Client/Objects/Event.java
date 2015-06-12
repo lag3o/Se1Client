@@ -1,6 +1,7 @@
 package com.gruppe2.Client.Objects;
 
 import com.gruppe2.Client.Exceptions.ParamMissingException;
+import com.gruppe2.Client.Interfaces.InterEvent;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,7 +9,7 @@ import java.util.Date;
 /**@author Myles Sutholt
 Ein Veranstaltungsobjekt
  */
-public class Event {
+public class Event implements InterEvent {
     private Integer id;
     private String name;
     private Date dateEnd;
@@ -26,17 +27,20 @@ public class Event {
         this.sessions = new ArrayList<Session>();
     }
     public Event(){
-
+        this.sessions = new ArrayList<Session>();
     }
-    public Integer getId() {
+    @Override
+    public Integer getEventID() {
         return id;
     }
 
-    public void setID(Integer id) throws ParamMissingException {
+    @Override
+    public void setEventID(Integer id) throws ParamMissingException {
         if (controlParameter(((Integer) id).toString())) throw new ParamMissingException("424");
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -50,10 +54,12 @@ public class Event {
         return name;
     }
 
+    @Override
     public Date getDateEnd() {
         return dateEnd;
     }
 
+    @Override
     public void setDateEnd(Date endDate) throws ParamMissingException {
 
         if (endDate == null ){
@@ -65,10 +71,12 @@ public class Event {
         }
     }
 
+    @Override
     public Date getDateStart() {
         return dateStart;
     }
 
+    @Override
     public void setDateStart(Date startDate) throws ParamMissingException {
 
         if (startDate == null ){
@@ -79,21 +87,26 @@ public class Event {
         }
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+    @Override
     public ArrayList<Session> getSessions() {
         return sessions;
     }
 
+    @Override
     public void setSessions(ArrayList<Session> sessions) {
         this.sessions = sessions;
     }
+    @Override
     public void addSessions(Session session) {
         this.sessions.add(session);
     }

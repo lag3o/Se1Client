@@ -95,7 +95,7 @@ public class SOAPEvent {
         try {
             androidHttpTransport.call(SOAP_ACTION, envelope);
             SoapObject response = (SoapObject) envelope.getResponse();
-            event.setID(Integer.parseInt(response.getProperty(0).toString()));
+            event.setEventID(Integer.parseInt(response.getProperty(0).toString()));
             event.setName(response.getProperty(1).toString());
             event.setDateStart((Date) response.getProperty((2)));
             event.setDateEnd((Date) response.getProperty((3)));

@@ -102,6 +102,10 @@
             android:name="com.gruppe2.Client.Activity.EditSession"
             android:label="@string/title_activity_edit_session" >
         </activity>
+        <activity
+            android:name="com.gruppe2.Client.Activity.EventView"
+            android:label="@string/title_activity_event_view" >
+        </activity>
     </application>
 
 </manifest>

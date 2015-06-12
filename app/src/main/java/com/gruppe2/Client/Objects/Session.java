@@ -1,13 +1,14 @@
 package com.gruppe2.Client.Objects;
 
 import com.gruppe2.Client.Exceptions.ParamMissingException;
+import com.gruppe2.Client.Interfaces.InterSession;
 
 import java.util.Date;
 
 /**@author Myles Sutholt
 Ein Terminobjekt
  */
-public class Session {
+public class Session implements InterSession {
     private Integer id;
     private String name;
     private Date dateStart;
@@ -31,15 +32,18 @@ public class Session {
         this.plz = plz;
 
     }
-    public Integer getId() {
+    @Override
+    public Integer getSessionID() {
         return id;
     }
 
-    public void setId(Integer id) throws ParamMissingException {
+    @Override
+    public void setSessionID(Integer id) throws ParamMissingException {
         if (controlParameter(((Integer) id).toString())) throw new ParamMissingException("401");
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -53,11 +57,13 @@ public class Session {
         return name;
     }
 
+    @Override
     public Date getDateStart() {
 
         return dateStart;
     }
 
+    @Override
     public void setDateStart(Date dateStart)throws ParamMissingException {
 
         if (dateStart == null ){
@@ -68,6 +74,7 @@ public class Session {
         }
     }
 
+    @Override
     public Date getDateEnd() {
         return dateEnd;
     }
@@ -82,6 +89,7 @@ public class Session {
         }
     }
 
+    @Override
     public String getLocation() {
         return location;
     }
@@ -91,10 +99,12 @@ public class Session {
         this.location = location;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
@@ -106,10 +116,12 @@ public class Session {
             return false;
     }
 
+    @Override
     public String getPlz() {
         return plz;
     }
 
+    @Override
     public void setPlz(String plz) {
         this.plz = plz;
     }

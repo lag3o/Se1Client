@@ -60,7 +60,7 @@ public class ListViewAdapter extends BaseAdapter{
             txtThird=(TextView) convertView.findViewById(R.id.last);
         }
         Session session =list.get(position);
-        txtFirst.setText((new Parser().TimeToString(session.getDateStart())));
+        txtFirst.setText((new Parser().DateToStringTime(session.getDateStart())));
         txtSecond.setText(session.getName());
         txtThird.setText(session.getLocation());
         return convertView;

@@ -39,7 +39,7 @@ public class EventsDataSource {
 
     public void createEvent(Event event) {
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.EVENT_ID, event.getId());
+        values.put(MySQLiteHelper.EVENT_ID, event.getEventID());
         values.put(MySQLiteHelper.EVENT_NAME, event.getName());
         values.put(MySQLiteHelper.EVENT_DATE_START, (new Parser().DateToString(event.getDateStart())));
         values.put(MySQLiteHelper.EVENT_DATE_END, (new Parser().DateToString(event.getDateEnd())));
@@ -57,8 +57,8 @@ public class EventsDataSource {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.EVENT_ID, eventId);
         values.put(MySQLiteHelper.SESSION_NAME, session.getName());
-        values.put(MySQLiteHelper.SESSION_DATE_START, (new Parser().TimeToString(session.getDateStart())));
-        values.put(MySQLiteHelper.SESSION_DATE_END, (new Parser().TimeToString(session.getDateEnd())));
+        values.put(MySQLiteHelper.SESSION_DATE_START, (new Parser().DateToString(session.getDateStart())));
+        values.put(MySQLiteHelper.SESSION_DATE_END, (new Parser().DateToString(session.getDateEnd())));
         values.put(MySQLiteHelper.SESSION_LOCATION, session.getLocation());
         values.put(MySQLiteHelper.SESSION_PLZ, session.getPlz());
         values.put(MySQLiteHelper.SESSION_DESCRIPTION, session.getDescription());
@@ -66,7 +66,7 @@ public class EventsDataSource {
         long insertId = database.insert(MySQLiteHelper.TABLE_SESSIONS, null,
                 values);
         try {
-            session.setId((int) insertId);
+            session.setSessionID((int) insertId);
         }
         catch (ParamMissingException exception){
 
@@ -74,7 +74,7 @@ public class EventsDataSource {
     }
 
     public void deleteEvent(Event event) {
-        long id = event.getId();
+        long id = event.getEventID();
         System.out.println("Event deleted with id: " + id);
         database.delete(MySQLiteHelper.TABLE_EVENTS, MySQLiteHelper.EVENT_ID
                 + " = " + id, null);
@@ -90,11 +90,11 @@ public class EventsDataSource {
         while (!cursor.isAfterLast()) {
             Event event = new Event();
             String eventName = cursorToEvent(cursor).getName();
-            int id = cursorToEvent(cursor).getId();
+            int id = cursorToEvent(cursor).getEventID();
             Date start = (cursorToEvent(cursor).getDateStart());
             try {
                 event.setName(eventName);
-                event.setID(id);
+                event.setEventID(id);
                 event.setDateStart(start);
             }
             catch (ParamMissingException e){
@@ -114,11 +114,10 @@ public class EventsDataSource {
 
     public ArrayList<Session> getSessions(int id){
         Cursor cursor = database.rawQuery("Select * FROM " + MySQLiteHelper.TABLE_SESSIONS +" WHERE "+
-                MySQLiteHelper.EVENT_ID + " = " + id, null);
+                MySQLiteHelper.EVENT_ID + " = " + id + " Order by "+ MySQLiteHelper.EVENT_DATE_START, null);
         cursor.moveToFirst();
         ArrayList<Session> sessions = new ArrayList<Session>();
         while (!cursor.isAfterLast()) {
-            HashMap<String, String> session = new HashMap<String, String>();
             Session tmpSession = cursorToSession(cursor);
             sessions.add(tmpSession);
             cursor.moveToNext();
@@ -178,11 +177,12 @@ public class EventsDataSource {
     private Event cursorToEvent(Cursor cursor) {
         Event event = new Event();
         try {
-            event.setID(cursor.getInt(0));
+            event.setEventID(cursor.getInt(0));
             event.setName(cursor.getString(1));
             event.setDateStart(new Parser().StringToDate(cursor.getString(2)));
             event.setDateEnd(new Parser().StringToDate(cursor.getString(3)));
             event.setDescription(cursor.getString(4));
+            event.setSessions(getSessions(cursor.getInt(0)));
         }
         catch (ParamMissingException exception){
 
@@ -192,11 +192,10 @@ public class EventsDataSource {
     private Session cursorToSession(Cursor cursor){
         Session session = new Session();
         try {
-            session.setId(cursor.getInt(0));
+            session.setSessionID(cursor.getInt(0));
             session.setName(cursor.getString(2));
-            String str =cursor.getString(3);
-            session.setDateStart(new Parser().StringToTime(str));
-            session.setDateEnd(new Parser().StringToTime(cursor.getString(4)));
+            session.setDateStart(new Parser().StringToDate(cursor.getString(3)));
+            session.setDateEnd(new Parser().StringToDate(cursor.getString(4)));
             session.setLocation(cursor.getString(5));
             session.setDescription(cursor.getString(7));
             session.setPlz(cursor.getString(6));

@@ -26,7 +26,6 @@ public class MyEvents extends AppCompatActivity {
 
     private ListView listview;
     private EventsDataSource datasource;
-    private static Integer EVENTID;
     private EventsViewAdapter adapter;
     private ArrayList<Event>  events;
     @Override
@@ -61,12 +60,12 @@ public class MyEvents extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 TextView tv = (TextView) view.findViewById(R.id.first);
-                EVENTID = Integer.parseInt(tv.getText().toString());
 
 
-                Intent intent = new Intent(MyEvents.this, SessionList.class);
+
+                Intent intent = new Intent(MyEvents.this, EventView.class);
                 Bundle b = new Bundle();
-                b.putInt("ID", EVENTID); //Your id
+                b.putInt("ID", events.get(position).getEventID()); //Your id
                 intent.putExtras(b); //Put your id to your next Intent
                 startActivity(intent);
             }

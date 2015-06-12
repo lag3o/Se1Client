@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,11 +24,12 @@ public class EventsViewAdapter extends BaseAdapter{
     TextView txtFirst;
     TextView txtSecond;
     TextView txtThird;
-    int i = 0;
+    int i;
     public EventsViewAdapter(Activity activity,ArrayList<Event> list){
         super();
         this.activity=activity;
         this.list=list;
+        i = 0;
     }
         @Override
         public int getCount() {
@@ -59,28 +61,20 @@ public class EventsViewAdapter extends BaseAdapter{
                 txtThird=(TextView) convertView.findViewById(R.id.last);
             }
             Event event = list.get(position);
-            txtFirst.setText(event.getId().toString());
+            txtFirst.setText(event.getEventID().toString());
             txtSecond.setText(event.getName());
-            txtThird.setText((new Parser().DateToString(event.getDateStart())));
-            int i = getCount();
-            int it = position % 2;
-            if (getCount() % 2 > 0) {
-                if (position % 2 > 0) {
-                    changeBGColor();
-                }
-            }
-            else {
-                if (position % 2 == 0) {
-                    changeBGColor();
-                }
+            txtThird.setText((new Parser().DateToStringDate(event.getDateStart())));
+            if ((position % 2) == 0) {
+                changeBGColor(position);
             }
             return convertView;
         }
-    private void changeBGColor(){
+    private void changeBGColor(int position){
         //"#353535"
-        txtFirst.setBackgroundColor(Color.parseColor("#FFFFFF"));
-        txtSecond.setBackgroundColor(Color.parseColor("#FFFFFF"));
-        txtThird.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        Log.d("POSTITION", ((Integer) position).toString() + " " + ((Integer) getCount()).toString());
+        txtFirst.setBackgroundColor(Color.parseColor("#353535"));
+        txtSecond.setBackgroundColor(Color.parseColor("#353535"));
+        txtThird.setBackgroundColor(Color.parseColor("#353535"));
     }
 
 }

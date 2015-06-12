@@ -16,8 +16,8 @@ public interface InterSession {
     //private String plz;
     //private String description;
 
-    public Integer getId();
-    public void setId(Integer id) throws ParamMissingException;
+    public Integer getSessionID();
+    public void setSessionID(Integer id) throws ParamMissingException;
     public String getName();
     public void setName(String name)throws ParamMissingException;
     @Override

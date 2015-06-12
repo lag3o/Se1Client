@@ -27,6 +27,7 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 
 import static com.gruppe2.Client.Helper.Constants.NAME;
@@ -44,41 +45,40 @@ public class SessionList extends AppCompatActivity {
     private static Integer id;
     private static Event event;
     private EventsDataSource datasource;
-    private static ArrayList<Session> sessions;
+    private ArrayList<Session> sessions = new ArrayList<Session>();
+    private ListViewAdapter adapter;
+    private static boolean dataReady=false;
     Bundle bundle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_session_list);
 
-        // ListView laden
-        ListView listView=(ListView)findViewById(R.id.session_list);
-
         //Übergebene Parameter entpacken
         bundle = getIntent().getExtras();
         this.id = bundle.getInt("ID");
 
-
         //Datenbankverbindung aufbauen
-        try{
-
+        //try{
+        try {
             AsyncEvent task = new AsyncEvent();
             task.execute();
-            sessions = event.getSessions();
         }
-        catch (Exception e) {
-            DatabaseHandler handler = ((DatabaseHandler) getApplicationContext());
-            datasource = (handler.getDatasource());
+        catch (Exception e){
 
-            //Daten abfragen für favorisierte Sessions
-            sessions = datasource.getSessions(id);
         }
+
+        while(!dataReady){}
 
         //ListViewAdapter initialisieren
-        ListViewAdapter adapter=new ListViewAdapter(this, sessions);
+
+        ListView listView=(ListView)findViewById(R.id.session_list);
+        adapter=new ListViewAdapter(this, sessions);
 
         //ListView befüllen
         listView.setAdapter(adapter);
+
+        adapter.notifyDataSetChanged();
 
         //ListView clickable machen
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -90,7 +90,7 @@ public class SessionList extends AppCompatActivity {
 
                 Intent intent = new Intent(SessionList.this, SessionView.class);
                 Bundle b = new Bundle();
-                b.putString(START, ((new Parser().TimeToString(sessions.get(position).getDateStart()))));
+                b.putString(START, ((new Parser().DateToString(sessions.get(position).getDateStart()))));
                 b.putString(LOC, (sessions.get(position).getLocation()));
                 b.putString(NAME, (sessions.get(position).getName()));
                 b.putString(DESCR, (sessions.get(position).getDescription()));
@@ -99,6 +99,19 @@ public class SessionList extends AppCompatActivity {
             }
 
         });
+
+
+    }
+
+    private void showList(){
+        Log.d("List", bundle.getString("Date")+ " Name:" + event.getName()+ " Session:" + event.getSessions().size());
+        Date date = (new Parser().StringToDate(bundle.getString("Date")));
+        for (int i = 0; i<event.getSessions().size(); i++){
+            if (event.getSessions().get(i).getDateStart().before(date)){
+                sessions.add(event.getSessions().get(i));
+            }
+        }
+
     }
 
     @Override
@@ -136,7 +149,7 @@ public class SessionList extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void getEvent(int id) {
+    private void getEvent() {
 
         String method_name = "getEvent";
 
@@ -163,13 +176,23 @@ public class SessionList extends AppCompatActivity {
             Log.d("dump Request: ", androidHttpTransport.requestDump);
             Log.d("dump response: ", androidHttpTransport.responseDump);
             SoapObject response = (SoapObject) envelope.getResponse();
+            event = (Event) response.getProperty(0);
 
-            //response noch
-            //event = (Event) response.getProperty(0);
         } catch (Exception e) {
             e.printStackTrace();
+            getDatabase();
+        }
+        finally {
+            showList();
         }
 
+    }
+    private void getDatabase(){
+        DatabaseHandler handler = ((DatabaseHandler) getApplicationContext());
+        datasource = (handler.getDatasource());
+
+        //Daten abfragen für favorisierte Sessions
+        event = datasource.getEvent(id);
     }
 
 
@@ -178,11 +201,13 @@ public class SessionList extends AppCompatActivity {
 
 
         protected Void doInBackground(String... params) {
-            getEvent(id);
+            getEvent();
+            dataReady = true;
             return null;
         }
         protected void onPostExecute(Void result) {
-            Log.i("Create User ", "onPostExecute");        }
+            dataReady = true;
+            Log.i("Event Data ", "onPostExecute");        }
 
         @Override
         protected void onPreExecute() {
