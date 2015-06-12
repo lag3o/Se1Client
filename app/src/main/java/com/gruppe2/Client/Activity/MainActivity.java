@@ -1,5 +1,6 @@
 package com.gruppe2.Client.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -14,12 +15,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.myles.projecto.R;
 import com.gruppe2.Client.Database.EventsDataSource;
 import com.gruppe2.Client.Database.DatabaseHandler;
 import com.gruppe2.Client.Helper.Push;
 
+import org.jboss.aerogear.android.unifiedpush.MessageHandler;
+import org.jboss.aerogear.android.unifiedpush.RegistrarManager;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
@@ -33,7 +37,7 @@ import static com.gruppe2.Client.Helper.Constants.SOAP_ACTION;
 /**@author  Myles Sutholt
     Diese Klasse registriert einen Benutzer und entscheidet welche Ansicht er sieht
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MessageHandler {
     private EventsDataSource datasource;
     public Button btsave;
     public EditText userName;
@@ -199,5 +203,39 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /*
+       Methoden Aufrufe für Push-Benachrichtung
+     */
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        RegistrarManager.registerMainThreadHandler(this);  // 1
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        RegistrarManager.unregisterMainThreadHandler(this); // 2
+    }
+
+    @Override
+    public void onMessage(Context context, Bundle message) {   // 3
+        // display the message contained in the payload
+        //TextView text = (TextView) findViewById(R.id.text_view1);
+        //text.setText(message.getString("alert"));
+    //    text.invalidate();
+    }
+
+    @Override
+    public void onDeleteMessage(Context context, Bundle message) {
+        // handle GoogleCloudMessaging.MESSAGE_TYPE_DELETED
+    }
+
+    @Override
+    public void onError() {
+        // handle GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR
     }
 }
