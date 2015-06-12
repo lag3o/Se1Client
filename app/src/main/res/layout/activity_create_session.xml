@@ -9,7 +9,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Fertig"
+        android:text="Absenden"
         android:id="@+id/btnSaveEvent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
@@ -66,8 +66,7 @@
         android:id="@+id/textView4"
         android:layout_above="@+id/btnNew"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="134dp" />
+        android:layout_alignParentStart="true" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -95,7 +94,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Weiteren Termin erstellen"
+        android:text="Neuer Termin"
         android:id="@+id/btnNew"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"

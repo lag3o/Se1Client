@@ -83,6 +83,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.gruppe2.Client.Activity.MyEvents" />
         </activity>
+        <activity
+            android:name="com.gruppe2.Client.Activity.CreateSessionView"
+            android:label="@string/title_activity_event_view"
+            android:launchMode="singleTop"
+            android:parentActivityName="com.gruppe2.Client.Activity.MyEvents" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.gruppe2.Client.Activity.MyEvents" />
+        </activity>
 
         <receiver
             android:name="org.jboss.aerogear.android.unifiedpush.gcm.GCMMes"

@@ -79,7 +79,7 @@ public class CreateEvent extends AppCompatActivity {
                             intent = new Intent(CreateEvent.this, EditSession.class);
                         }
                         else{
-                            intent = new Intent(CreateEvent.this, CreateSession.class);
+                            intent = new Intent(CreateEvent.this, CreateSessionView.class);
                         }
                         intent.putExtras(b); //Put your id to your next Intent
                         startActivity(intent);

@@ -33,7 +33,7 @@ import static com.gruppe2.Client.Helper.Constants.DESCR;
 public class CreateSession extends AppCompatActivity {
 
     private Bundle b;
-    private Event event = null;
+    private static Event event = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,8 +92,8 @@ public class CreateSession extends AppCompatActivity {
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
             simpleDateFormat.setLenient(false);
-            Date start = simpleDateFormat.parse(b.getString(START) + " " + (((EditText) findViewById(R.id.txtStartDate)).getText().toString()));
-            Date end = simpleDateFormat.parse(b.getString(END) + " " +(((EditText) findViewById(R.id.txtEndDate)).getText().toString()));
+            Date start = simpleDateFormat.parse(b.getString("Date") + " " + (((EditText) findViewById(R.id.txtStartDate)).getText().toString()));
+            Date end = simpleDateFormat.parse(b.getString("Date") + " " +(((EditText) findViewById(R.id.txtEndDate)).getText().toString()));
 
             if (start == null || end == null){
                 throw new ParamMissingException("Anfangs- und/oder Endzeit");
