@@ -44,7 +44,7 @@ public class CreateEvent extends AppCompatActivity {
         if (bundle != null) {
             if (bundle.containsKey("ID")) {
 
-                EventsDataSource datasource = ((DatabaseHandler) getApplicationContext()).datasource;
+                EventsDataSource datasource = ((DatabaseHandler) getApplicationContext()).getDatasource();
                 Event event = datasource.getEvent(bundle.getInt("ID"));
 
 

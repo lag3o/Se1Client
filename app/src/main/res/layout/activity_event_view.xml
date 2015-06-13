@@ -9,6 +9,11 @@
         android:layout_height="fill_parent"
         android:orientation="vertical"
         android:padding="3dp" >
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true" />
 
         <FrameLayout
             android:id="@android:id/tabcontent"
@@ -17,11 +22,7 @@
             android:layout_above="@android:id/tabs"
             android:layout_weight="1" />
 
-        <TabWidget
-            android:id="@android:id/tabs"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true" />
+
     </RelativeLayout>
 
 </TabHost>

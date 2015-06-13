@@ -48,7 +48,7 @@ public class EditSession extends AppCompatActivity {
             String name = b.getString(NAME);
             event = new Event(b.getString(NAME), start, end, b.getString(DESCR));
             event.setEventID(b.getInt("ID"));
-            EventsDataSource datasource = ((DatabaseHandler) getApplicationContext()).datasource;
+            EventsDataSource datasource = ((DatabaseHandler) getApplicationContext()).getDatasource();
             event.setSessions(datasource.getSessions(b.getInt("ID")));
             datasource.deleteEvent(event);
         }

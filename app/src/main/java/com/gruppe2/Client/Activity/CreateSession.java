@@ -33,28 +33,27 @@ import static com.gruppe2.Client.Helper.Constants.DESCR;
 public class CreateSession extends AppCompatActivity {
 
     private Bundle b;
-    private static Event event = null;
+    private Event event;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_session);
-
+        event = ((DatabaseHandler) getApplicationContext()).getEvent();
         b = getIntent().getExtras();
-        try{
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
-            simpleDateFormat.setLenient(false);
-            Date end = simpleDateFormat.parse((b.getString(END) + " 23:59"));
-            Date start = simpleDateFormat.parse((b.getString(START) + " 00:00"));
+        if (event == null) {
+            try {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
+                simpleDateFormat.setLenient(false);
+                Date end = simpleDateFormat.parse((b.getString(END) + " 23:59"));
+                Date start = simpleDateFormat.parse((b.getString(START) + " 00:00"));
 
-            event = new Event(b.getString(NAME), start, end, b.getString(DESCR));
+                event = new Event(b.getString(NAME), start, end, b.getString(DESCR));
+            } catch (ParamMissingException exception) {
+
+            } catch (ParseException e) {
+
+            }
         }
-        catch (ParamMissingException exception){
-
-        }
-        catch (ParseException e){
-
-        }
-
     }
     public void onClick(View view) {
         Session session;
@@ -78,6 +77,7 @@ public class CreateSession extends AppCompatActivity {
                     datasource.createEvent(event);
 
                     Intent intent = new Intent(CreateSession.this, MyEvents.class);
+                    ((DatabaseHandler) getApplicationContext()).resetEvent();
                     startActivity(intent);
                 }
             case R.id.btnNew:

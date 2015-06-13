@@ -42,7 +42,7 @@ public class MyEvents extends AppCompatActivity {
         listview = (ListView) findViewById(R.id.events_list);
 
         //Daten abfragen und konvertieren
-        events= (((DatabaseHandler)getApplicationContext()).datasource.getAllNames());
+        events= datasource.getAllNames();
 
         //ArrayAdapter initialisieren
         adapter= new EventsViewAdapter(this, events);
@@ -102,7 +102,7 @@ public class MyEvents extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        events= (((DatabaseHandler)getApplicationContext()).datasource.getAllNames());
+        events= datasource.getAllNames();
 
         adapter.notifyDataSetChanged();
 

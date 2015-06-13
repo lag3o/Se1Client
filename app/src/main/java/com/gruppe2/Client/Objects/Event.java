@@ -16,6 +16,7 @@ public class Event implements InterEvent {
     private Date dateStart;
     private String description;
     private ArrayList<Session> sessions;
+    private int userID;
 
     public Event(String name, Date startDate, Date endDate, String description)throws ParamMissingException {
 

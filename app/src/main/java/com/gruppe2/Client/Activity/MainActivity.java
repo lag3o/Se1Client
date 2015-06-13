@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             // Aufruf zur PushService Registrierung
-            ((DatabaseHandler) getApplicationContext()).push.registerDeviceOnPushServer(userName.getText().toString(), this);
+            ((DatabaseHandler) getApplicationContext()).getPush().registerDeviceOnPushServer(userName.getText().toString(), this);
 
         } catch (Exception e) {
             e.printStackTrace();
