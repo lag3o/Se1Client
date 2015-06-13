@@ -1,6 +1,7 @@
 package com.gruppe2.Client.Helper;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.gruppe2.Client.Database.DatabaseHandler;
 
@@ -45,10 +46,14 @@ public class Push {
 
                 @Override
                 public void onSuccess(Void data) {
+                    Log.i("Push-Service erfolgreich registriert"," ");
                 }
 
                 @Override
                 public void onFailure(Exception e) {
+
+                    Log.i("Push-Service nicht registriert", " ");
+
                     //Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
