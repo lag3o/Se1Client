@@ -8,11 +8,13 @@ import android.view.MenuItem;
 import android.widget.TabHost;
 
 import com.example.myles.projecto.R;
-import com.gruppe2.Client.Database.DatabaseHandler;
+import com.gruppe2.Client.Database.ApplicationHandler;
 import com.gruppe2.Client.Database.EventsDataSource;
+import com.gruppe2.Client.Exceptions.ParamMissingException;
 import com.gruppe2.Client.Helper.Parser;
 import com.gruppe2.Client.Objects.Event;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,12 +29,12 @@ import static com.gruppe2.Client.Helper.Constants.START;
  */
 public class CreateSessionView extends TabActivity {
 
-    EventsDataSource datasource;
+    private EventsDataSource datasource;
+    private Event event;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_view);
-
 
         Bundle b = getIntent().getExtras();
         Date dateEnd = new Date();
@@ -46,7 +48,21 @@ public class CreateSessionView extends TabActivity {
         catch (Exception e){
 
         }
+        if (event == null) {
+            try {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
+                simpleDateFormat.setLenient(false);
+                Date end = simpleDateFormat.parse((b.getString(END) + " 23:59"));
+                Date start = simpleDateFormat.parse((b.getString(START) + " 00:00"));
 
+                event = new Event(b.getString(NAME), start, end, b.getString(DESCR));
+            } catch (ParamMissingException exception) {
+
+            } catch (ParseException e) {
+
+            }
+        }
+        ((ApplicationHandler) getApplicationContext()).setEvent(event);
 
         TabHost tabHost = getTabHost();
 
@@ -55,6 +71,7 @@ public class CreateSessionView extends TabActivity {
         Calendar start = Calendar.getInstance();
         start.setTime(dateStart);
         for (Date date = start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
+
 
             b.putString("Date", (new Parser().DateToStringDate(date)));
             Intent intent1 = new Intent().setClass(this, CreateSession.class);

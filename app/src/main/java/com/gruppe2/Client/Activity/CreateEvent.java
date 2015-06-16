@@ -17,7 +17,7 @@ import static com.gruppe2.Client.Helper.Constants.START;
 import static com.gruppe2.Client.Helper.Constants.END;
 import static com.gruppe2.Client.Helper.Constants.DESCR;
 import com.example.myles.projecto.R;
-import com.gruppe2.Client.Database.DatabaseHandler;
+import com.gruppe2.Client.Database.ApplicationHandler;
 import com.gruppe2.Client.Database.EventsDataSource;
 import com.gruppe2.Client.Exceptions.ParamMissingException;
 import com.gruppe2.Client.Exceptions.WrongDateException;
@@ -44,7 +44,7 @@ public class CreateEvent extends AppCompatActivity {
         if (bundle != null) {
             if (bundle.containsKey("ID")) {
 
-                EventsDataSource datasource = ((DatabaseHandler) getApplicationContext()).getDatasource();
+                EventsDataSource datasource = ((ApplicationHandler) getApplicationContext()).getDatasource();
                 Event event = datasource.getEvent(bundle.getInt("ID"));
 
 

@@ -16,20 +16,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.myles.projecto.R;
-import com.gruppe2.Client.Database.DatabaseHandler;
-import com.gruppe2.Client.Database.EventsDataSource;
+import com.gruppe2.Client.Database.ApplicationHandler;
 import com.gruppe2.Client.Helper.EventsViewAdapter;
 import com.gruppe2.Client.Helper.Parser;
 import com.gruppe2.Client.Objects.Event;
 
 import org.ksoap2.SoapEnvelope;
-import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import static com.gruppe2.Client.Helper.Constants.NAMESPACE;
 import static com.gruppe2.Client.Helper.Constants.SOAP_ACTION;

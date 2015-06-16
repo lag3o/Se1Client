@@ -3,20 +3,22 @@ import android.app.Application;
 ;
 import android.content.Context;
 
+import com.gruppe2.Client.Exceptions.ParamMissingException;
 import com.gruppe2.Client.Helper.Push;
 import com.gruppe2.Client.Objects.Event;
+import com.gruppe2.Client.Objects.Session;
 
 /**@author  Myles Sutholt
-    Dies ist eine Application Class um die Datenbank während der gesamten Sitzung aktiv zu halten
+    @description Dies ist eine Application Class, die bestimmte Mechanismen während der gesamten Sitzung aktiv hält
  */
-public class DatabaseHandler extends Application  {
+public class ApplicationHandler extends Application  {
     private EventsDataSource datasource;
     private Push push;
     private Event event;
 
-    public DatabaseHandler(){}
+    public ApplicationHandler(){}
 
-    public DatabaseHandler(Context context){
+    public ApplicationHandler(Context context){
         datasource = new EventsDataSource(context);
         datasource.open();
     }
@@ -42,5 +44,20 @@ public class DatabaseHandler extends Application  {
 
     public void resetEvent(){
         event = null;
+    }
+    public void updateEvent(Event event) {
+        this.event = event;
+
+        datasource.deleteEvent(event);
+        datasource.createEvent(event);
+    }
+    public void setEvent(Event event){
+        this.event = event;
+    }
+    public void setEventID(int id) {
+        try {
+            event.setEventID(id);
+        } catch (ParamMissingException e) {
+        }
     }
 }

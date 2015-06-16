@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.example.myles.projecto.R;
-import com.gruppe2.Client.Database.DatabaseHandler;
+import com.gruppe2.Client.Database.ApplicationHandler;
 import com.gruppe2.Client.Exceptions.ParamMissingException;
 import com.gruppe2.Client.Exceptions.WrongDateException;
 import com.gruppe2.Client.Helper.Parser;
@@ -48,7 +48,7 @@ public class EditSession extends AppCompatActivity {
             String name = b.getString(NAME);
             event = new Event(b.getString(NAME), start, end, b.getString(DESCR));
             event.setEventID(b.getInt("ID"));
-            EventsDataSource datasource = ((DatabaseHandler) getApplicationContext()).getDatasource();
+            EventsDataSource datasource = ((ApplicationHandler) getApplicationContext()).getDatasource();
             event.setSessions(datasource.getSessions(b.getInt("ID")));
             datasource.deleteEvent(event);
         }
@@ -68,7 +68,7 @@ public class EditSession extends AppCompatActivity {
                 if (!( session == null)) {
                     if ((event.getSessions().size()) >0) event.getSessions().set(i, session);
 
-                    DatabaseHandler handler = ((DatabaseHandler) getApplicationContext());
+                    ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());
                     EventsDataSource datasource = (handler.getDatasource());
 
                     datasource.createEvent(event);

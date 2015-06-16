@@ -11,6 +11,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.gruppe2.Client.Exceptions.ParamMissingException;
 import com.gruppe2.Client.Helper.Parser;
@@ -74,12 +75,18 @@ public class EventsDataSource {
     }
 
     public void deleteEvent(Event event) {
-        long id = event.getEventID();
-        System.out.println("Event deleted with id: " + id);
-        database.delete(MySQLiteHelper.TABLE_EVENTS, MySQLiteHelper.EVENT_ID
-                + " = " + id, null);
-        database.delete(MySQLiteHelper.TABLE_SESSIONS, MySQLiteHelper.EVENT_ID
-                + " = " + id, null);
+        try {
+            long id = event.getEventID();
+
+            System.out.println("Event deleted with id: " + id);
+            database.delete(MySQLiteHelper.TABLE_EVENTS, MySQLiteHelper.EVENT_ID
+                    + " = " + id, null);
+            database.delete(MySQLiteHelper.TABLE_SESSIONS, MySQLiteHelper.EVENT_ID
+                    + " = " + id, null);
+        }
+        catch (Exception e){
+            Log.i("Create Session Local", "Event nicht vorhanden");
+        }
     }
 
     public ArrayList<Event> getAllNames() {
@@ -114,7 +121,7 @@ public class EventsDataSource {
 
     public ArrayList<Session> getSessions(int id){
         Cursor cursor = database.rawQuery("Select * FROM " + MySQLiteHelper.TABLE_SESSIONS +" WHERE "+
-                MySQLiteHelper.EVENT_ID + " = " + id + " Order by "+ MySQLiteHelper.EVENT_DATE_START, null);
+                MySQLiteHelper.EVENT_ID + " = " + id + " Order by "+ MySQLiteHelper.SESSION_DATE_START, null);
         cursor.moveToFirst();
         ArrayList<Session> sessions = new ArrayList<Session>();
         while (!cursor.isAfterLast()) {
@@ -151,6 +158,7 @@ public class EventsDataSource {
         cursor.moveToFirst();
         Event event = cursorToEvent(cursor);
         cursor.close();
+        event.setSessions(getSessions(event.getEventID()));
         return event;
     }
     public Integer isActive(){
@@ -182,7 +190,7 @@ public class EventsDataSource {
             event.setDateStart(new Parser().StringToDate(cursor.getString(2)));
             event.setDateEnd(new Parser().StringToDate(cursor.getString(3)));
             event.setDescription(cursor.getString(4));
-            event.setSessions(getSessions(cursor.getInt(0)));
+            //event.setSessions(getSessions(cursor.getInt(0)));
         }
         catch (ParamMissingException exception){
 

@@ -1,10 +1,8 @@
 package com.gruppe2.Client.Activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,15 +13,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.example.myles.projecto.R;
 import com.gruppe2.Client.Database.EventsDataSource;
-import com.gruppe2.Client.Database.DatabaseHandler;
-import com.gruppe2.Client.Helper.Push;
+import com.gruppe2.Client.Database.ApplicationHandler;
 
-import org.jboss.aerogear.android.unifiedpush.MessageHandler;
-import org.jboss.aerogear.android.unifiedpush.RegistrarManager;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
@@ -37,7 +31,7 @@ import static com.gruppe2.Client.Helper.Constants.SOAP_ACTION;
 /**@author  Myles Sutholt
     Diese Klasse registriert einen Benutzer und entscheidet welche Ansicht er sieht
  */
-public class MainActivity extends AppCompatActivity implements MessageHandler {
+public class MainActivity extends AppCompatActivity{
     private EventsDataSource datasource;
     public Button btsave;
     public EditText userName;
@@ -50,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements MessageHandler {
 
 
         setContentView(R.layout.activity_main);
-        DatabaseHandler database = new DatabaseHandler(this);
+        ApplicationHandler database = new ApplicationHandler(this);
 
 
         btsave = (Button) findViewById(R.id.saveNick);
@@ -62,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements MessageHandler {
 
         if (uName!=null) {
 
-            DatabaseHandler handler = ((DatabaseHandler) getApplicationContext());
+            ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());
             datasource = (handler.getDatasource());
 
             if(datasource.isEmpty()){
@@ -147,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements MessageHandler {
 
 
             // Aufruf zur PushService Registrierung
-            ((DatabaseHandler) getApplicationContext()).getPush().registerDeviceOnPushServer(userName.getText().toString(), this);
+            ((ApplicationHandler) getApplicationContext()).getPush().registerDeviceOnPushServer(userName.getText().toString(), this);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -212,30 +206,11 @@ public class MainActivity extends AppCompatActivity implements MessageHandler {
     @Override
     protected void onResume() {
         super.onResume();
-        RegistrarManager.registerMainThreadHandler(this);  // 1
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        RegistrarManager.unregisterMainThreadHandler(this); // 2
     }
 
-    @Override
-    public void onMessage(Context context, Bundle message) {   // 3
-        // display the message contained in the payload
-        //TextView text = (TextView) findViewById(R.id.text_view1);
-        //text.setText(message.getString("alert"));
-    //    text.invalidate();
-    }
-
-    @Override
-    public void onDeleteMessage(Context context, Bundle message) {
-        // handle GoogleCloudMessaging.MESSAGE_TYPE_DELETED
-    }
-
-    @Override
-    public void onError() {
-        // handle GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR
-    }
 }

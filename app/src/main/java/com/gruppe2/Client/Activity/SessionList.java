@@ -13,7 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.myles.projecto.R;
-import com.gruppe2.Client.Database.DatabaseHandler;
+import com.gruppe2.Client.Database.ApplicationHandler;
 import com.gruppe2.Client.Database.EventsDataSource;
 import com.gruppe2.Client.Helper.ListViewAdapter;
 import com.gruppe2.Client.Helper.Parser;
@@ -44,32 +44,21 @@ public class SessionList extends AppCompatActivity {
 
     private static Integer id;
     private static Event event;
-    private EventsDataSource datasource;
     private ArrayList<Session> sessions = new ArrayList<Session>();
     private ListViewAdapter adapter;
-    private static boolean dataReady=false;
     Bundle bundle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_session_list);
 
-        //Übergebene Parameter entpacken
-        bundle = getIntent().getExtras();
-        this.id = bundle.getInt("ID");
-
-        //Datenbankverbindung aufbauen
-        //try{
-        try {
-            AsyncEvent task = new AsyncEvent();
-            task.execute();
+        if (event == null){
+            event =((ApplicationHandler) getApplicationContext()).getEvent();
         }
-        catch (Exception e){
-
+        for (int i = 0; i<event.getSessions().size(); i++){
+            Log.d("EventInfo:", event.getName() +"; " + event.getSessions().get(i).getName());
         }
-
-        while(!dataReady){}
-
+        showList();
         //ListViewAdapter initialisieren
 
         ListView listView=(ListView)findViewById(R.id.session_list);
@@ -104,14 +93,18 @@ public class SessionList extends AppCompatActivity {
     }
 
     private void showList(){
+        bundle = getIntent().getExtras();
         Log.d("List", bundle.getString("Date")+ " Name:" + event.getName()+ " Session:" + event.getSessions().size());
-        Date date = (new Parser().StringToDate(bundle.getString("Date")));
+        Date date = (new Parser().StringToDate(bundle.getString("Date") + " 00:00"));
+        Date dateV = (new Parser().StringToDate(bundle.getString("DateV") + " 00:00"));
         for (int i = 0; i<event.getSessions().size(); i++){
-            if (event.getSessions().get(i).getDateStart().before(date)){
-                sessions.add(event.getSessions().get(i));
+            Log.d("Session Date", new Parser().DateToStringDate(event.getSessions().get(i).getDateStart()) + " "+ new Parser().DateToStringDate(date));
+            if (event.getSessions().get(i).getDateStart().before(date)) {
+                if (event.getSessions().get(i).getDateStart().after(dateV)){
+                    sessions.add(event.getSessions().get(i));
+                }
             }
         }
-
     }
 
     @Override
@@ -149,75 +142,6 @@ public class SessionList extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void getEvent() {
 
-        String method_name = "getEvent";
-
-        SoapObject request = new SoapObject(NAMESPACE, method_name);
-
-        PropertyInfo pi = new PropertyInfo();
-
-        request.addProperty("eventID", 2);
-
-        /*
-         * Set the web service envelope
-         *
-         * */
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(request);
-        HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
-        /*
-         * Call the web service and retrieve result ... how luvly <3
-         *
-         * */
-        try {
-            androidHttpTransport.debug = true;
-            androidHttpTransport.call(SOAP_ACTION, envelope, null);
-            Log.d("dump Request: ", androidHttpTransport.requestDump);
-            Log.d("dump response: ", androidHttpTransport.responseDump);
-            SoapObject response = (SoapObject) envelope.getResponse();
-            event = (Event) response.getProperty(0);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            getDatabase();
-        }
-        finally {
-            showList();
-        }
-
-    }
-    private void getDatabase(){
-        DatabaseHandler handler = ((DatabaseHandler) getApplicationContext());
-        datasource = (handler.getDatasource());
-
-        //Daten abfragen für favorisierte Sessions
-        event = datasource.getEvent(id);
-    }
-
-
-    public class AsyncEvent extends AsyncTask<String, Void, Void> {
-
-
-
-        protected Void doInBackground(String... params) {
-            getEvent();
-            dataReady = true;
-            return null;
-        }
-        protected void onPostExecute(Void result) {
-            dataReady = true;
-            Log.i("Event Data ", "onPostExecute");        }
-
-        @Override
-        protected void onPreExecute() {
-            Log.i("Create User ", "onPreExecute");
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            Log.i("Create User ", "onProgressUpdate");
-        }
-    }
 
 }

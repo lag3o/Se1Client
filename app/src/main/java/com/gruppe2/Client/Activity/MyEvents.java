@@ -12,7 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.myles.projecto.R;
-import com.gruppe2.Client.Database.DatabaseHandler;
+import com.gruppe2.Client.Database.ApplicationHandler;
 import com.gruppe2.Client.Database.EventsDataSource;
 import com.gruppe2.Client.Helper.EventsViewAdapter;
 import com.gruppe2.Client.Objects.Event;
@@ -28,6 +28,7 @@ public class MyEvents extends AppCompatActivity {
     private EventsDataSource datasource;
     private EventsViewAdapter adapter;
     private ArrayList<Event>  events;
+    private ApplicationHandler handler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +36,7 @@ public class MyEvents extends AppCompatActivity {
 
         //Verbindungsaufbau zur SQLite Datenbank
 
-        DatabaseHandler handler = ((DatabaseHandler) getApplicationContext());
+        handler = ((ApplicationHandler) getApplicationContext());
         datasource = (handler.getDatasource());
 
         //Listview laden
@@ -91,6 +92,7 @@ public class MyEvents extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         switch (item.getItemId()) {
             case R.id.action_add:
+                handler.resetEvent();
                 Intent intent = new Intent(MyEvents.this, CreateEvent.class);
                 startActivity(intent);
             case R.id.action_settings:

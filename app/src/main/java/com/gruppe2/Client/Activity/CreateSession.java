@@ -5,15 +5,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
 import com.example.myles.projecto.R;
-import com.gruppe2.Client.Database.DatabaseHandler;
+import com.gruppe2.Client.Database.ApplicationHandler;
 import com.gruppe2.Client.Exceptions.ParamMissingException;
 import com.gruppe2.Client.Exceptions.WrongDateException;
+import com.gruppe2.Client.Helper.Parser;
 import com.gruppe2.Client.Helper.Validade;
 import com.gruppe2.Client.Objects.Event;
 import com.gruppe2.Client.Database.EventsDataSource;
@@ -38,51 +40,36 @@ public class CreateSession extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_session);
-        event = ((DatabaseHandler) getApplicationContext()).getEvent();
+        event = ((ApplicationHandler) getApplicationContext()).getEvent();
         b = getIntent().getExtras();
-        if (event == null) {
-            try {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
-                simpleDateFormat.setLenient(false);
-                Date end = simpleDateFormat.parse((b.getString(END) + " 23:59"));
-                Date start = simpleDateFormat.parse((b.getString(START) + " 00:00"));
 
-                event = new Event(b.getString(NAME), start, end, b.getString(DESCR));
-            } catch (ParamMissingException exception) {
-
-            } catch (ParseException e) {
-
-            }
-        }
     }
     public void onClick(View view) {
         Session session;
         switch (view.getId()) {
             case R.id.btnSaveEvent:
                 session = saveSession();
-                if (!( session == null)) {
-                    event.addSessions(session);
+                if ( session != null) {
+                    event.getSessions().add(session);
 
-                    DatabaseHandler handler = ((DatabaseHandler) getApplicationContext());
+                    ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());
                     EventsDataSource datasource = (handler.getDatasource());
 
                     // ID zuweisen
+                    int id = datasource.countEvents()+1;
                     try {
-                        int id = datasource.countEvents();
                         event.setEventID(id);
                     }
-                    catch (ParamMissingException e){}
+                    catch (Exception e){}
 
-
-                    datasource.createEvent(event);
-
+                    handler.updateEvent(event);
                     Intent intent = new Intent(CreateSession.this, MyEvents.class);
-                    ((DatabaseHandler) getApplicationContext()).resetEvent();
+                    ((ApplicationHandler) getApplicationContext()).resetEvent();
                     startActivity(intent);
                 }
             case R.id.btnNew:
                 session = saveSession();
-                if (!( session == null)) event.addSessions(session);
+                if ( session != null) event.getSessions().add(session);
 
         }
         }
@@ -104,7 +91,7 @@ public class CreateSession extends AppCompatActivity {
                         ((EditText) findViewById(R.id.txtDescription)).getText().toString());
                 new Validade().validateDates(session);
             }
-
+            Log.d("Session Create", b.getString("Date") + " " + new Parser().DateToString(session.getDateStart()));
         }
         catch (ParamMissingException exception){
             AlertDialog.Builder builder = new AlertDialog.Builder(CreateSession.this);

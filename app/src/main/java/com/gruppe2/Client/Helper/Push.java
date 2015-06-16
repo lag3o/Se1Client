@@ -3,8 +3,6 @@ package com.gruppe2.Client.Helper;
 import android.content.Context;
 import android.util.Log;
 
-import com.gruppe2.Client.Database.DatabaseHandler;
-
 import org.jboss.aerogear.android.core.Callback;
 import org.jboss.aerogear.android.unifiedpush.PushRegistrar;
 import org.jboss.aerogear.android.unifiedpush.RegistrarManager;
@@ -46,13 +44,13 @@ public class Push {
 
                 @Override
                 public void onSuccess(Void data) {
-                    Log.i("Push-Service erfolgreich registriert"," ");
+                    Log.i("Push registriert"," ");
                 }
 
                 @Override
                 public void onFailure(Exception e) {
 
-                    Log.i("Push-Service nicht registriert", " ");
+                    Log.i("Push nicht registriert", " ");
 
                     //Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -64,4 +62,29 @@ public class Push {
 
     }
 }
+
+
+/* In die Activities
+
+        On Terminate
+        RegistrarManager.unregisterMainThreadHandler(this); // 2
+
+    @Override
+    public void onMessage(Context context, Bundle message) {   // 3
+        // display the message contained in the payload
+        //TextView text = (TextView) findViewById(R.id.text_view1);
+        //text.setText(message.getString("alert"));
+    //    text.invalidate();
+    }
+
+    @Override
+    public void onDeleteMessage(Context context, Bundle message) {
+        // handle GoogleCloudMessaging.MESSAGE_TYPE_DELETED
+    }
+
+    @Override
+    public void onError() {
+        // handle GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR
+    }
+ */
 
