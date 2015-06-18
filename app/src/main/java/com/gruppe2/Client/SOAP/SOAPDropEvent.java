@@ -5,20 +5,16 @@ import android.util.Log;
 
 import com.gruppe2.Client.Database.ApplicationHandler;
 import com.gruppe2.Client.Helper.DataHelper;
-import com.gruppe2.Client.Objects.Event;
-
 /**
  *
- * Der AsyncTask, der eine Serveranfrage für ein Veranstaltungsobjekt initiiert
+ * Der AsyncTask, der die Veranstaltungslöschung auf dem Server intitiiert
  *
  *@author  Myles Sutholt
  */
-
-
-public class SOAPEvent extends AsyncTask<String, Void, Void>  {
+public class SOAPDropEvent extends AsyncTask<String, Void, Void> {
 
     private ApplicationHandler handler;
-    public SOAPEvent(ApplicationHandler handler){
+    public SOAPDropEvent(ApplicationHandler handler){
         super();
         this.handler = handler;
 

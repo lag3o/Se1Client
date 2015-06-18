@@ -19,11 +19,11 @@
         android:title="Termin hinzufügen"
         app:showAsAction="never"
         />
-    <item
-        android:id="@+id/action_deleteEvent"
+    <item android:id="@+id/action_delete"
+        android:icon="@android:drawable/ic_delete"
         android:title="Veranstaltung absagen"
-        app:showAsAction="never"
-        />
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom" />
 
 
     <item android:id="@+id/action_settings" android:title="@string/action_settings"

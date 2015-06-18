@@ -28,8 +28,11 @@ import static com.gruppe2.Client.Helper.Constants.NAME;
 import static com.gruppe2.Client.Helper.Constants.START;
 import static com.gruppe2.Client.Helper.Constants.END;
 import static com.gruppe2.Client.Helper.Constants.DESCR;
-/**@author Myles Sutholt
-    Diese Klasse bearbeitet Termine und persistiert sie
+/**
+Diese Klasse bearbeitet Termine und persistiert sie
+
+
+ @author Myles Sutholt
  */
 public class EditSession extends AppCompatActivity {
     private int i = 0;
@@ -76,6 +79,7 @@ public class EditSession extends AppCompatActivity {
                     Intent intent = new Intent(EditSession.this, MyEvents.class);
                     startActivity(intent);
                 }
+                break;
             case R.id.btnNext:
                 session = saveSession();
                 if (session != null){
@@ -88,6 +92,7 @@ public class EditSession extends AppCompatActivity {
                         event.getSessions().add(session);
                     }
                 }
+                break;
         }
     }
     private Session saveSession(){

@@ -6,8 +6,10 @@ import com.gruppe2.Client.Objects.Session;
 
 import java.util.Calendar;
 
-/**@author Myles Sutholt
+/**
 Validiert das Datum (Enddatum nach Startdatum)
+ *
+ *@author  Myles Sutholt
  */
 public class Validade {
 

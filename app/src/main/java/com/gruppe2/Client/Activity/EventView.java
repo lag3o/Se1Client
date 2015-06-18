@@ -1,10 +1,11 @@
 package com.gruppe2.Client.Activity;
 
 import android.app.TabActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TabHost;
@@ -14,58 +15,67 @@ import com.gruppe2.Client.Database.ApplicationHandler;
 import com.gruppe2.Client.Database.EventsDataSource;
 import com.gruppe2.Client.Helper.Parser;
 import com.gruppe2.Client.Objects.Event;
-import com.gruppe2.Client.Objects.Session;
-
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.serialization.PropertyInfo;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
+import com.gruppe2.Client.SOAP.SOAPDropEvent;
+import com.gruppe2.Client.SOAP.SOAPEvent;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import static com.gruppe2.Client.Helper.Constants.DESCR;
 import static com.gruppe2.Client.Helper.Constants.END;
 import static com.gruppe2.Client.Helper.Constants.NAME;
-import static com.gruppe2.Client.Helper.Constants.NAMESPACE;
-import static com.gruppe2.Client.Helper.Constants.SOAP_ACTION;
 import static com.gruppe2.Client.Helper.Constants.START;
-import static com.gruppe2.Client.Helper.Constants.URL;
 
+/**
+Diese Klasse erzeugt eine Ansicht der Veranstaltung. Hierbei wird für jeden Tag der Veranstaltung ein
+ Tab mit einem Ablaufplan erzeugt sowie ein "Info"-Tab für die allgemeinen Veranstaltungsinformationen
+
+ @author  Myles Sutholt
+
+ */
 public class EventView extends TabActivity {
 
     private Event event;
     private int id;
     private EventsDataSource datasource;
     private boolean dataReady;
+    private ApplicationHandler handler;
+    private Bundle b;
+    private boolean deleteEvent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_view);
 
-
-        ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());
-        datasource = (handler.getDatasource());
+        handler = ((ApplicationHandler) getApplicationContext());
+        //datasource = (handler.getDatasource());
         Bundle bundle = getIntent().getExtras();
         id = bundle.getInt("ID");
 
         try {
-            AsyncEvent task = new AsyncEvent();
-            task.execute();
+            handler.setEvent(new Event(id));
+            SOAPEvent task = new SOAPEvent(handler);
+            task.execute().get(5000, TimeUnit.MILLISECONDS);
+
         }
         catch (Exception e){
 
         }
-
-        while(!dataReady){}
+        event = handler.getEvent();
 
         TabHost tabHost = getTabHost();
-        Bundle b = new Bundle();
-        b.putString(START, ((new Parser().DateToStringDate(event.getDateStart()))));
-        b.putString(NAME, (event.getName()));
-        b.putString(DESCR, (event.getDescription()));
-        b.putString(END, ((new Parser().DateToStringDate(event.getDateEnd()))));
+        b = new Bundle();
+        try {
+            b.putString(START, ((new Parser().DateToStringDate(event.getDateStart()))));
+            b.putString(NAME, (event.getName()));
+            b.putString(DESCR, (event.getDescription()));
+            b.putString(END, ((new Parser().DateToStringDate(event.getDateEnd()))));
+        }
+        catch (Exception e){
+            Log.d("EventView Bundle", e.toString());
+            alert();
+        }
         Intent intent = new Intent().setClass(this, EventDetail.class);
         intent.putExtras(b); //Put your id to your next Intent
         TabHost.TabSpec spec = tabHost.newTabSpec("Details").setIndicator("Info", getResources().getDrawable(R.drawable.abc_tab_indicator_material));
@@ -74,28 +84,33 @@ public class EventView extends TabActivity {
         tabHost.addTab(spec);
 
 
+        try {
+            Calendar end = Calendar.getInstance();
+            end.setTime(event.getDateEnd());
+            Calendar start = Calendar.getInstance();
+            start.setTime(event.getDateStart());
+            for (Date date = start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
 
-        Calendar end = Calendar.getInstance();
-        end.setTime(event.getDateEnd());
-        Calendar start = Calendar.getInstance();
-        start.setTime(event.getDateStart());
-        for (Date date = start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
-
-            b = new Bundle();
-            start.add(Calendar.DATE, 1);
-            Date dateBundle = start.getTime();
-            b.putString("Date", (new Parser().DateToStringDate(dateBundle)));
-            start.add(Calendar.DATE, -1);
-            dateBundle = start.getTime();
-            b.putString("DateV", (new Parser().DateToStringDate(dateBundle)));
-            Intent intent1 = new Intent().setClass(this, SessionList.class);
-            intent1.putExtras(b);
-            String day = start.get(Calendar.DAY_OF_MONTH) + "." + start.get(Calendar.MONTH);
-            TabHost.TabSpec spec1 = tabHost.newTabSpec(day).setIndicator(day, getResources().getDrawable(R.drawable.abc_tab_indicator_material));
-            spec1.setContent(intent1);
-            tabHost.addTab(spec1);
-        }
+                b = new Bundle();
+                start.add(Calendar.DATE, 1);
+                Date dateBundle = start.getTime();
+                b.putString("Date", (new Parser().DateToStringDate(dateBundle)));
+                start.add(Calendar.DATE, -1);
+                dateBundle = start.getTime();
+                b.putString("DateV", (new Parser().DateToStringDate(dateBundle)));
+                Intent intent1 = new Intent().setClass(this, SessionList.class);
+                intent1.putExtras(b);
+                String day = start.get(Calendar.DAY_OF_MONTH) + "." + start.get(Calendar.MONTH);
+                TabHost.TabSpec spec1 = tabHost.newTabSpec(day).setIndicator(day, getResources().getDrawable(R.drawable.abc_tab_indicator_material));
+                spec1.setContent(intent1);
+                tabHost.addTab(spec1);
+            }
             tabHost.setCurrentTab(0);
+        }
+        catch (Exception e){
+            Log.d("EventView TabHost", e.toString());
+            alert();
+        }
     }
 
     @Override
@@ -112,142 +127,68 @@ public class EventView extends TabActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        Intent intent;
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_addSession:
+                intent = new Intent(EventView.this, EditSession.class);
+                startActivity(intent);
+                break;
+            case R.id.action_edit:
+                intent = new Intent(EventView.this, CreateEvent.class);
+                intent.putExtras(b);
+                startActivity(intent);
+                break;
+            case R.id.action_push:
+                //Push Mitteilung abfackeln
+                break;
+            case R.id.action_delete:
+                try {
+                    deleteEvent = true;
+                    SOAPDropEvent task = new SOAPDropEvent(handler);
+                    task.execute();
+                }
+                catch (Exception e){
+
+                }
+                finally {
+                    intent = new Intent(EventView.this, MainActivity.class);
+                    startActivity(intent);
+                }
+                break;
+            case R.id.action_settings:
+                break;
+
         }
 
         return super.onOptionsItemSelected(item);
     }
+    private void alert(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                EventView.this );
 
-    private void getEvent() {
+        // set title
+        alertDialogBuilder.setTitle("Fehler aufgetreten");
 
-        String method_name = "getEvent";
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Ups. Es ist ein Fehler aufgetreten. Wir bitten um Entschuldigung. Wir befinden uns im Beta-Stadium")
+                .setCancelable(false)
 
-        SoapObject request = new SoapObject(NAMESPACE, method_name);
-
-        PropertyInfo pi = new PropertyInfo();
-
-        request.addProperty("eventID", 2);
-
-        /*
-         * Set the web service envelope
-         *
-         * */
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(request);
-        HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
-        /*
-         * Call the web service and retrieve result ... how luvly <3
-         *
-         * */
-        try {
-            androidHttpTransport.debug = true;
-            androidHttpTransport.call(SOAP_ACTION, envelope, null);
-            Log.d("dump Request: ", androidHttpTransport.requestDump);
-            Log.d("dump response: ", androidHttpTransport.responseDump);
-            SoapObject response = (SoapObject) envelope.getResponse();
-            java.util.Vector<SoapObject> responseSession = (java.util.Vector<SoapObject>) envelope.getResponse();
-
-            /** lists property count */
-            if (response.hasProperty("id")) {
-                event.setEventID(Integer.parseInt(response.getPropertyAsString("id")));
-            }
-            if (response.hasProperty("name")) {
-                event.setName(response.getPropertyAsString("name"));
-            }
-
-            if (response.hasProperty("dateEnd")) {
-                event.setDateEnd((new Parser().StringToTempDate(response.getPropertyAsString("dateEnd"))));
-            }
-
-            if (response.hasProperty("description")) {
-                event.setDescription(response.getPropertyAsString("description"));
-            }
-
-            if (response.hasProperty("dateStart")) {
-                event.setDateStart((new Parser().StringToTempDate(response.getPropertyAsString("dateStart"))));
-            }
-            /** loop */
-            if (response != null) {
-                for (SoapObject cs : responseSession) {
-                    /** temp PhongTro object */
-                    Session tempObj = new Session();
-
-                    if (cs.hasProperty("id")) {
-                        tempObj.setSessionID(Integer.parseInt(cs.getPropertyAsString("id")));
+                .setNeutralButton("Entschuldigung angenommen", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(EventView.this, EventsList.class);
+                        intent.putExtras(b); //Put your id to your next Intent
+                        startActivity(intent);
                     }
-                    if (cs.hasProperty("name")) {
-                        tempObj.setName(cs.getPropertyAsString("name"));
-                    }
+                });
 
-                    if (cs.hasProperty("dateEnd")) {
-                        tempObj.setDateEnd((new Parser().StringToTempDate(cs.getPropertyAsString("dateEnd"))));
-                    }
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
 
-                    if (cs.hasProperty("description")) {
-                        tempObj.setDescription(cs.getPropertyAsString("description"));
-                    }
-
-                    if (cs.hasProperty("dateStart")) {
-                        tempObj.setDateStart((new Parser().StringToTempDate(cs.getPropertyAsString("dateStart"))));
-                    }
-                    if (cs.hasProperty("location")) {
-                        tempObj.setLocation((cs.getPropertyAsString("location")));
-                    }
-                    if (cs.hasProperty("plz")) {
-                        tempObj.setLocation((cs.getPropertyAsString("plz")));
-                    }
-                    Log.d("LOG",cs.getProperty(0).toString());
-
-                    /** Adding temp PhongTro object to list */
-                    event.getSessions().add(tempObj);
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            /** if an error handled events setting null */
-            event = new Event();
-            getDatabase();
-        }
-        finally{
-            ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());
-            handler.setEvent(event);
-        }
-
-    }
-    private void getDatabase(){
-        datasource = ((ApplicationHandler) getApplicationContext()).getDatasource();
-
-        //Daten abfragen für favorisierte Sessions
-        event = datasource.getEvent(id);
-        Log.d("Sessions", "Anzahl: " + event.getSessions().size() );
+        // show it
+        alertDialog.show();
     }
 
 
-    public class AsyncEvent extends AsyncTask<String, Void, Void> {
-
-
-
-        protected Void doInBackground(String... params) {
-            getEvent();
-            dataReady = true;
-            return null;
-        }
-        protected void onPostExecute(Void result) {
-            dataReady = true;
-            Log.i("Event Data ", "onPostExecute");        }
-
-        @Override
-        protected void onPreExecute() {
-            Log.i("Create User ", "onPreExecute");
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            Log.i("Create User ", "onProgressUpdate");
-        }
-    }
 }

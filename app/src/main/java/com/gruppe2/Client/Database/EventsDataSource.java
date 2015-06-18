@@ -17,8 +17,10 @@ import com.gruppe2.Client.Exceptions.ParamMissingException;
 import com.gruppe2.Client.Helper.Parser;
 import com.gruppe2.Client.Objects.Event;
 import com.gruppe2.Client.Objects.Session;
-/**@author  Myles Sutholt
-    Diese Klasse persistiert die Daten lokal
+/** Diese Klasse persistiert die Daten lokal
+ *
+ *
+ @author  Myles Sutholt
  */
 public class EventsDataSource {
 
@@ -39,38 +41,46 @@ public class EventsDataSource {
     }
 
     public void createEvent(Event event) {
-        ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.EVENT_ID, event.getEventID());
-        values.put(MySQLiteHelper.EVENT_NAME, event.getName());
-        values.put(MySQLiteHelper.EVENT_DATE_START, (new Parser().DateToString(event.getDateStart())));
-        values.put(MySQLiteHelper.EVENT_DATE_END, (new Parser().DateToString(event.getDateEnd())));
-        values.put(MySQLiteHelper.EVENT_DESCRIPTION, event.getDescription());
+        try {
+            ContentValues values = new ContentValues();
+            values.put(MySQLiteHelper.EVENT_ID, event.getEventID());
+            values.put(MySQLiteHelper.EVENT_NAME, event.getName());
+            values.put(MySQLiteHelper.EVENT_DATE_START, (new Parser().DateToString(event.getDateStart())));
+            values.put(MySQLiteHelper.EVENT_DATE_END, (new Parser().DateToString(event.getDateEnd())));
+            values.put(MySQLiteHelper.EVENT_DESCRIPTION, event.getDescription());
 
-        long insertId = database.insert(MySQLiteHelper.TABLE_EVENTS, null,
-                values);
-        for (int i = 0; i<event.getSessions().size(); i++){
-            createSession(event.getSessions().get(i), insertId);
+            long insertId = database.insert(MySQLiteHelper.TABLE_EVENTS, null,
+                    values);
+            for (int i = 0; i < event.getSessions().size(); i++) {
+                createSession(event.getSessions().get(i), insertId);
+            }
+        }
+        catch (Exception e){
+            Log.i("createEvent Database", e.toString());
         }
     }
 
 
     private void createSession(Session session, long eventId) {
-        ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.EVENT_ID, eventId);
-        values.put(MySQLiteHelper.SESSION_NAME, session.getName());
-        values.put(MySQLiteHelper.SESSION_DATE_START, (new Parser().DateToString(session.getDateStart())));
-        values.put(MySQLiteHelper.SESSION_DATE_END, (new Parser().DateToString(session.getDateEnd())));
-        values.put(MySQLiteHelper.SESSION_LOCATION, session.getLocation());
-        values.put(MySQLiteHelper.SESSION_PLZ, session.getPlz());
-        values.put(MySQLiteHelper.SESSION_DESCRIPTION, session.getDescription());
-
-        long insertId = database.insert(MySQLiteHelper.TABLE_SESSIONS, null,
-                values);
         try {
+            ContentValues values = new ContentValues();
+            values.put(MySQLiteHelper.EVENT_ID, eventId);
+            values.put(MySQLiteHelper.SESSION_NAME, session.getName());
+            values.put(MySQLiteHelper.SESSION_DATE_START, (new Parser().DateToString(session.getDateStart())));
+            values.put(MySQLiteHelper.SESSION_DATE_END, (new Parser().DateToString(session.getDateEnd())));
+            values.put(MySQLiteHelper.SESSION_LOCATION, session.getLocation());
+            values.put(MySQLiteHelper.SESSION_PLZ, session.getPlz());
+            values.put(MySQLiteHelper.SESSION_DESCRIPTION, session.getDescription());
+
+            long insertId = database.insert(MySQLiteHelper.TABLE_SESSIONS, null,
+                    values);
             session.setSessionID((int) insertId);
         }
         catch (ParamMissingException exception){
-
+            Log.i("createSession Database", exception.toString());
+        }
+        catch (Exception e){
+            Log.i("createEvent Database", e.toString());
         }
     }
 
@@ -85,93 +95,124 @@ public class EventsDataSource {
                     + " = " + id, null);
         }
         catch (Exception e){
-            Log.i("Create Session Local", "Event nicht vorhanden");
+            Log.i("Create Session Local", "Event nicht vorhanden " + e.toString());
         }
     }
 
     public ArrayList<Event> getAllNames() {
         ArrayList<Event> events = new ArrayList<Event>();
+        Cursor cursor;
+        try {
+            cursor = database.rawQuery("Select * FROM " + MySQLiteHelper.TABLE_EVENTS, null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Event event = new Event();
+                String eventName = cursorToEvent(cursor).getName();
+                int id = cursorToEvent(cursor).getEventID();
+                Date start = (cursorToEvent(cursor).getDateStart());
+                try {
+                    event.setName(eventName);
+                    event.setEventID(id);
+                    event.setDateStart(start);
+                } catch (ParamMissingException ex) {
+                    Log.i("createEvent Database", ex.toString());
+                }
 
-        Cursor cursor = database.rawQuery("Select * FROM " + MySQLiteHelper.TABLE_EVENTS, null);
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            Event event = new Event();
-            String eventName = cursorToEvent(cursor).getName();
-            int id = cursorToEvent(cursor).getEventID();
-            Date start = (cursorToEvent(cursor).getDateStart());
-            try {
-                event.setName(eventName);
-                event.setEventID(id);
-                event.setDateStart(start);
+                events.add(event);
+
+                cursor.moveToNext();
+                cursor.close();
             }
-            catch (ParamMissingException e){
-
-            }
-
-            events.add(event);
-
-            cursor.moveToNext();
+        }
+        catch (Exception e) {
+            Log.i("createEvent Database", e.toString());
         }
         // make sure to close the cursor
-        cursor.close();
         return events;
     }
 
 
 
     public ArrayList<Session> getSessions(int id){
-        Cursor cursor = database.rawQuery("Select * FROM " + MySQLiteHelper.TABLE_SESSIONS +" WHERE "+
-                MySQLiteHelper.EVENT_ID + " = " + id + " Order by "+ MySQLiteHelper.SESSION_DATE_START, null);
-        cursor.moveToFirst();
         ArrayList<Session> sessions = new ArrayList<Session>();
-        while (!cursor.isAfterLast()) {
-            Session tmpSession = cursorToSession(cursor);
-            sessions.add(tmpSession);
-            cursor.moveToNext();
-        }
+        try {
+            Cursor cursor = database.rawQuery("Select * FROM " + MySQLiteHelper.TABLE_SESSIONS + " WHERE " +
+                    MySQLiteHelper.EVENT_ID + " = " + id + " Order by " + MySQLiteHelper.SESSION_DATE_START, null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Session tmpSession = cursorToSession(cursor);
+                sessions.add(tmpSession);
+                cursor.moveToNext();
+            }
 
-        cursor.close();
+            cursor.close();
+        }
+        catch (Exception e) {
+            Log.i("createEvent Database", e.toString());
+        }
         return sessions;
     }
 
 
     public boolean isEmpty(){
-        Cursor cursor = database.rawQuery("Select Count(*) FROM " + MySQLiteHelper.TABLE_EVENTS, null);
-        cursor.moveToFirst();
-        if(cursor.getInt(0) > 0){
+        try {
+            Cursor cursor = database.rawQuery("Select Count(*) FROM " + MySQLiteHelper.TABLE_EVENTS, null);
+            cursor.moveToFirst();
+            if (cursor.getInt(0) > 0) {
+                cursor.close();
+                return false;
+            }
             cursor.close();
-            return false;
+
         }
-        cursor.close();
-        return true;
+        catch (Exception e) {
+            Log.i("createEvent Database", e.toString());
+        }
+        finally {
+            return true;
+        }
     }
     public int countEvents(){
-        Cursor cursor = database.rawQuery("Select Count(*) FROM " + MySQLiteHelper.TABLE_EVENTS, null);
-        cursor.moveToFirst();
-        int i = cursor.getInt(0);
-        cursor.close();
+        int i = 0;
+        try {
+            Cursor cursor = database.rawQuery("Select Count(*) FROM " + MySQLiteHelper.TABLE_EVENTS, null);
+            cursor.moveToFirst();
+            i = cursor.getInt(0);
+            cursor.close();
+        }
+        catch (Exception e) {
+            Log.i("createEvent Database", e.toString());
+        }
         return i;
     }
     public Event getEvent(int id){
-        Cursor cursor = database.rawQuery("Select * FROM " + MySQLiteHelper.TABLE_EVENTS + " Where " +
-                MySQLiteHelper.EVENT_ID + " = " + id, null);
-        cursor.moveToFirst();
-        Event event = cursorToEvent(cursor);
-        cursor.close();
-        event.setSessions(getSessions(event.getEventID()));
+        Event event;
+        try {
+            Cursor cursor = database.rawQuery("Select * FROM " + MySQLiteHelper.TABLE_EVENTS + " Where " +
+                    MySQLiteHelper.EVENT_ID + " = " + id, null);
+            cursor.moveToFirst();
+            event = cursorToEvent(cursor);
+            cursor.close();
+            event.setSessions(getSessions(event.getEventID()));
+        }
+        catch (Exception e){
+            Log.i("getEvent Database", e.toString());
+            event = new Event();
+        }
         return event;
     }
     public Integer isActive(){
-        Cursor cursor = database.rawQuery("Select * FROM " + MySQLiteHelper.TABLE_EVENTS, null);
-        cursor.moveToFirst();
-        Date date = new Date();
-        Date date2 = (new Parser().StringToDate(cursor.getString(2)));
-        Date date3 = (new Parser().StringToDate(cursor.getString(3)));
-        boolean b = date.compareTo((new Parser().StringToDate(cursor.getString(2)))) >= 0;
-        boolean b2 = date.compareTo((new Parser().StringToDate(cursor.getString(3)))) <= 0;
-        if (!cursor.isAfterLast()) {
-            if (date.compareTo((new Parser().StringToDate(cursor.getString(2)))) >= 0
-                    && date.compareTo((new Parser().StringToDate(cursor.getString(3)))) <= 0){
+        try {
+            Cursor cursor = database.rawQuery("Select * FROM " + MySQLiteHelper.TABLE_EVENTS, null);
+            cursor.moveToFirst();
+            Date date = new Date();
+            Date date2 = (new Parser().StringToDate(cursor.getString(2)));
+            Date date3 = (new Parser().StringToDate(cursor.getString(3)));
+            boolean b = date.compareTo((new Parser().StringToDate(cursor.getString(2)))) >= 0;
+            boolean b2 = date.compareTo((new Parser().StringToDate(cursor.getString(3)))) <= 0;
+            if (!cursor.isAfterLast()) {
+                if (date.compareTo((new Parser().StringToDate(cursor.getString(2)))) >= 0
+                        && date.compareTo((new Parser().StringToDate(cursor.getString(3)))) <= 0) {
 
                     Integer i = (Integer) cursor.getInt(0);
                     cursor.close();
@@ -179,7 +220,11 @@ public class EventsDataSource {
                 }
             }
 
-        cursor.close();
+            cursor.close();
+        }
+        catch (Exception e) {
+            Log.i("createEvent Database", e.toString());
+        }
         return null;
     }
     private Event cursorToEvent(Cursor cursor) {

@@ -29,8 +29,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**@author  Myles Sutholt
-    Diese Klasse erzeugt eine Veranstaltung und übergibt die Daten an die nächste Activity
+/**
+ Diese Klasse erzeugt eine Veranstaltung und übergibt die Daten an die nächste Activity
+
+ @author  Myles Sutholt
  */
 public class CreateEvent extends AppCompatActivity {
 
@@ -40,6 +42,8 @@ public class CreateEvent extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
+
+        //Bundle entpacken und falls eine ID vorhanden ist die Datenfelder befüllen
         bundle = getIntent().getExtras();
         if (bundle != null) {
             if (bundle.containsKey("ID")) {
@@ -91,7 +95,13 @@ public class CreateEvent extends AppCompatActivity {
 
     private boolean saveEvent(){
         try {
-
+            /**
+             *Test auf richtige Eingabe der verschiedenen Parameter über die Eingabefelder
+             *Zunächst Prüfung auf korrekte Angabe der Daten
+             *@exception falls eines der Daten fehlt oder das Datum in einem falschen Format eingegeben wurde.
+             *
+             * Anschließend über Erzeugung einer Veranstaltung die Prüfung ob die restlichen Parameter korrekt eingegeben wurden.
+             */
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
             simpleDateFormat.setLenient(false);
             Date start = simpleDateFormat.parse(((EditText) findViewById(R.id.txtStartDate)).getText().toString());
@@ -108,6 +118,9 @@ public class CreateEvent extends AppCompatActivity {
             }
 
         }
+        /**
+         * Exception Handling durch Popups, welche Informationen zu dem Fehler beinhalten
+         */
         catch (ParamMissingException exception){
             AlertDialog.Builder builder = new AlertDialog.Builder(CreateEvent.this);
             builder.setTitle("Fehlende Angabe");
@@ -124,7 +137,7 @@ public class CreateEvent extends AppCompatActivity {
         catch (ParseException e) {
             AlertDialog.Builder builder = new AlertDialog.Builder(CreateEvent.this);
             builder.setTitle("Ungültiges Datumsformat");
-            builder.setMessage("Beispiele: 31.12.2015/ 1.1.05");
+            builder.setMessage("Beispiele: 31/12/2015/ 1/1/05");
             builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();

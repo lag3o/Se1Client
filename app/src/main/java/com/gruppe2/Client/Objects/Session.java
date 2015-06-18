@@ -5,8 +5,10 @@ import com.gruppe2.Client.Interfaces.InterSession;
 
 import java.util.Date;
 
-/**@author Myles Sutholt
-Ein Terminobjekt
+/**
+Ein Terminobjekt laut Interfacespezifikation
+ *
+ *@author  Myles Sutholt
  */
 public class Session implements InterSession {
     private Integer id;

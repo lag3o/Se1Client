@@ -37,8 +37,10 @@ import static com.gruppe2.Client.Helper.Constants.START;
 import static com.gruppe2.Client.Helper.Constants.LOC;
 import static com.gruppe2.Client.Helper.Constants.DESCR;
 import static com.gruppe2.Client.Helper.Constants.URL;
-/**@author  Myles Sutholt
-    Diese Klasse zeigt einen Ablaufplan einer Veranstaltung
+/**
+Diese Klasse zeigt einen Ablaufplan einer Veranstaltung
+
+ @author  Myles Sutholt
  */
 public class SessionList extends AppCompatActivity {
 
@@ -127,15 +129,20 @@ public class SessionList extends AppCompatActivity {
             case R.id.action_addSession:
                 intent = new Intent(SessionList.this, EditSession.class);
                 startActivity(intent);
+                break;
             case R.id.action_edit:
                 intent = new Intent(SessionList.this, CreateEvent.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
+                break;
             case R.id.action_push:
                 //Push Mitteilung abfackeln
-            case R.id.action_deleteEvent:
+                break;
+            case R.id.action_delete:
                 //Veranstaltung löschen
+                break;
             case R.id.action_settings:
+                break;
 
         }
 

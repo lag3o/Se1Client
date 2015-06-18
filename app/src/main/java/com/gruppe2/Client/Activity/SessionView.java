@@ -1,5 +1,6 @@
 package com.gruppe2.Client.Activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -24,12 +25,16 @@ import com.example.myles.projecto.R;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
-/**@author  Myles Sutholt
-    Diese Klasse zeigt eine Detailansicht einer Veranstaltung
+/**
+Diese Klasse zeigt eine Detailansicht einer Veranstaltung
+
+
+ @author  Myles Sutholt
  */
 public class SessionView extends AppCompatActivity {
     private static double longitude;
     private static double latitude;
+    private boolean flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +56,11 @@ public class SessionView extends AppCompatActivity {
             if(addresses.size() > 0) {
                 latitude = addresses.get(0).getLatitude();
                 longitude = addresses.get(0).getLongitude();
+                flag =true;
             }
         } catch (IOException e) {
             e.printStackTrace();
+            flag=false;
         }
 
 
@@ -61,13 +68,19 @@ public class SessionView extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Uri gmmIntentUri = Uri.parse("geo:" + latitude + "," + longitude);
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                mapIntent.setPackage("com.google.android.apps.maps");
+                if (flag = true){
+                    Uri gmmIntentUri = Uri.parse("geo:" + latitude + "," + longitude);
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
 
-                if (mapIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(mapIntent);
+                    if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(mapIntent);
+                    }
                 }
+                else{
+                    alert();
+                }
+
 
             }
         });
@@ -93,5 +106,28 @@ public class SessionView extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    private void alert(){
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(
+                SessionView.this );
+
+        // set title
+        alertDialogBuilder.setTitle("Fehler aufgetreten");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Ups. Es ist ein Fehler aufgetreten. Wir bitten um Entschuldigung. Wir befinden uns im Beta-Stadium")
+                .setCancelable(false)
+
+                .setNeutralButton("Entschuldigung angenommen", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+
+        // create alert dialog
+        android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
     }
 }

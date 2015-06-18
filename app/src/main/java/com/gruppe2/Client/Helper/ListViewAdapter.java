@@ -15,8 +15,10 @@ import android.app.Activity;
 
         import com.example.myles.projecto.R;
         import com.gruppe2.Client.Objects.Session;
-/**@author Myles Sutholt
-Generierung der Ansicht für den Ablaufplan in einer dreispaltigen ListView
+/**
+ *Generierung der Ansicht für den Ablaufplan in einer dreispaltigen ListView
+ *
+ *@author  Myles Sutholt
  */
 public class ListViewAdapter extends BaseAdapter{
 

@@ -1,7 +1,8 @@
 package com.gruppe2.Client.Helper;
 
 /**
- * Created by Malte on 12.06.15.
+ *
+ *@author  Malte Lange
  */
 
 import org.jboss.aerogear.android.unifiedpush.MessageHandler;

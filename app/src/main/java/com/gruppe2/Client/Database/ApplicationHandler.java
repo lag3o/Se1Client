@@ -3,18 +3,28 @@ import android.app.Application;
 ;
 import android.content.Context;
 
+import com.gruppe2.Client.Activity.MainActivity;
 import com.gruppe2.Client.Exceptions.ParamMissingException;
+import com.gruppe2.Client.Helper.NotifyingHandler;
 import com.gruppe2.Client.Helper.Push;
 import com.gruppe2.Client.Objects.Event;
 import com.gruppe2.Client.Objects.Session;
 
-/**@author  Myles Sutholt
-    @description Dies ist eine Application Class, die bestimmte Mechanismen während der gesamten Sitzung aktiv hält
+import org.jboss.aerogear.android.unifiedpush.RegistrarManager;
+
+import java.util.ArrayList;
+
+/**
+Dies ist eine Application Class, die bestimmte Mechanismen während der gesamten Sitzung aktiv hält
+
+ @author  Myles Sutholt
  */
 public class ApplicationHandler extends Application  {
     private EventsDataSource datasource;
     private Push push;
     private Event event;
+    private ArrayList<Event> events;
+    private final NotifyingHandler NHANDLER = new NotifyingHandler();
 
     public ApplicationHandler(){}
 
@@ -29,6 +39,7 @@ public class ApplicationHandler extends Application  {
         datasource.open();
         push = new Push();
         event = null;
+        events = new ArrayList<Event>();
     }
     public void pushRegister(String alias, Context context){
         push.registerDeviceOnPushServer(alias, context);
@@ -60,4 +71,13 @@ public class ApplicationHandler extends Application  {
         } catch (ParamMissingException e) {
         }
     }
+
+    public ArrayList<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(ArrayList<Event> events) {
+        this.events = events;
+    }
+
 }

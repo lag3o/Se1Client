@@ -1,5 +1,6 @@
 package com.gruppe2.Client.Activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -18,6 +19,7 @@ import com.example.myles.projecto.R;
 import com.gruppe2.Client.Database.EventsDataSource;
 import com.gruppe2.Client.Database.ApplicationHandler;
 
+import org.jboss.aerogear.android.unifiedpush.RegistrarManager;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
@@ -28,8 +30,11 @@ import org.ksoap2.transport.HttpTransportSE;
 import static com.gruppe2.Client.Helper.Constants.NAMESPACE;
 import static com.gruppe2.Client.Helper.Constants.URL;
 import static com.gruppe2.Client.Helper.Constants.SOAP_ACTION;
-/**@author  Myles Sutholt
-    Diese Klasse registriert einen Benutzer und entscheidet welche Ansicht er sieht
+/**
+Diese Klasse registriert einen Benutzer und entscheidet welche Ansicht er sieht
+
+
+ @author  Myles Sutholt
  */
 public class MainActivity extends AppCompatActivity{
     private EventsDataSource datasource;
@@ -145,6 +150,7 @@ public class MainActivity extends AppCompatActivity{
 
         } catch (Exception e) {
             e.printStackTrace();
+            alert();
         }
 
 
@@ -199,9 +205,31 @@ public class MainActivity extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
-    /*
-       Methoden Aufrufe für Push-Benachrichtung
-     */
+    private void alert(){
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(
+                MainActivity.this );
+
+        // set title
+        alertDialogBuilder.setTitle("Fehler aufgetreten");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Ups. Es ist ein Fehler aufgetreten. Wir bitten um Entschuldigung. Wir befinden uns im Beta-Stadium")
+                .setCancelable(false)
+
+                .setNeutralButton("Entschuldigung angenommen", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+        // create alert dialog
+        android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+    }
 
     @Override
     protected void onResume() {

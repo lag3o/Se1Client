@@ -1,7 +1,10 @@
 package com.gruppe2.Client.Activity;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -15,7 +18,12 @@ import static com.gruppe2.Client.Helper.Constants.DESCR;
 import static com.gruppe2.Client.Helper.Constants.LOC;
 import static com.gruppe2.Client.Helper.Constants.NAME;
 import static com.gruppe2.Client.Helper.Constants.START;
+/**
+Diese Klasse erzeugt eine Ansicht über die Veranstaltungsdetails
 
+ @author  Myles Sutholt
+
+ */
 public class EventDetail extends ActionBarActivity {
 
     @Override
@@ -23,13 +31,18 @@ public class EventDetail extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_detail);
         Event event = ((ApplicationHandler) getApplicationContext()).getEvent();
-
-        TextView text = (TextView) findViewById(R.id.name);
-                text.setText(event.getName());
-                ((TextView) findViewById(R.id.name)).setText(event.getName());
-        ((TextView) findViewById(R.id.time)).setText((new Parser().DateToStringDate(event.getDateStart())) + " - " + (new Parser().DateToStringDate(event.getDateEnd())));
-        ((TextView) findViewById(R.id.description)).setText(event.getDescription());
-        //((TextView) findViewById(R.id.contact)).setText(event.getUser);
+        try {
+            TextView text = (TextView) findViewById(R.id.name);
+            text.setText(event.getName());
+            ((TextView) findViewById(R.id.name)).setText(event.getName());
+            ((TextView) findViewById(R.id.time)).setText((new Parser().DateToStringDate(event.getDateStart())) + " - " + (new Parser().DateToStringDate(event.getDateEnd())));
+            ((TextView) findViewById(R.id.description)).setText(event.getDescription());
+            //((TextView) findViewById(R.id.contact)).setText(event.getUser);
+        }
+        catch (Exception e){
+            Log.d("EventDetail setText", e.toString());
+            alert();
+        }
     }
 
     @Override
@@ -52,5 +65,30 @@ public class EventDetail extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    private void alert(){
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(
+                EventDetail.this );
+
+        // set title
+        alertDialogBuilder.setTitle("Fehler aufgetreten");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Ups. Es ist ein Fehler aufgetreten. Wir bitten um Entschuldigung. Wir befinden uns im Beta-Stadium")
+                .setCancelable(false)
+
+                .setNeutralButton("Entschuldigung angenommen", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(EventDetail.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+        // create alert dialog
+        android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
     }
 }

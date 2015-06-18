@@ -7,24 +7,24 @@ import com.gruppe2.Client.Database.ApplicationHandler;
 import com.gruppe2.Client.Helper.DataHelper;
 import com.gruppe2.Client.Objects.Event;
 
+import java.util.ArrayList;
+
 /**
  *
- * Der AsyncTask, der eine Serveranfrage für ein Veranstaltungsobjekt initiiert
+ * Der AsyncTask, der eine Serveranfrage für eine Liste von Veranstaltungen initiiert
  *
  *@author  Myles Sutholt
  */
-
-
-public class SOAPEvent extends AsyncTask<String, Void, Void>  {
+public class SOAPEvents  extends AsyncTask<String, Void, Void> {
 
     private ApplicationHandler handler;
-    public SOAPEvent(ApplicationHandler handler){
+    public SOAPEvents(ApplicationHandler handler){
         super();
         this.handler = handler;
 
     }
     protected Void doInBackground(String... params) {
-        new DataHelper().getEvent(handler);
+        new DataHelper().getEvents(handler);
         return null;
     }
     protected void onPostExecute(Void result) {

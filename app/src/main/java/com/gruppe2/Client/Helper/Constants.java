@@ -1,7 +1,10 @@
 package com.gruppe2.Client.Helper;
 
-/**@author Myles Sutholt
-Namensflags für Verwendung in anderen Klassen
+/**
+ * Namensflags für Verwendung in anderen Klassen
+ *
+ *
+ @author  Myles Sutholt
  */
 public class Constants {
 

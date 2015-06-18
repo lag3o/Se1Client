@@ -1,6 +1,7 @@
 package com.gruppe2.Client.Activity;
 
 import android.app.TabActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -25,7 +26,11 @@ import static com.gruppe2.Client.Helper.Constants.NAME;
 import static com.gruppe2.Client.Helper.Constants.START;
 
 /**
- * Created by myles on 12.06.15.
+Diese Klasse erzeugt eine VTabübersicht. Dabei wird für jeden Tag ein eigener Tab erzeugt, welchem das Datum
+ übergeben wird.
+
+ @author  Myles Sutholt
+
  */
 public class CreateSessionView extends TabActivity {
 
@@ -57,9 +62,9 @@ public class CreateSessionView extends TabActivity {
 
                 event = new Event(b.getString(NAME), start, end, b.getString(DESCR));
             } catch (ParamMissingException exception) {
-
+                alert();
             } catch (ParseException e) {
-
+                alert();
             }
         }
         ((ApplicationHandler) getApplicationContext()).setEvent(event);
@@ -73,7 +78,7 @@ public class CreateSessionView extends TabActivity {
         for (Date date = start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
 
 
-            b.putString("Date", (new Parser().DateToStringDate(date)));
+            b.putString("Date", (new Parser().DateToStringDate(start.getTime())));
             Intent intent1 = new Intent().setClass(this, CreateSession.class);
             intent1.putExtras(b);
             String day = start.get(Calendar.DAY_OF_MONTH) + "." + start.get(Calendar.MONTH);
@@ -104,5 +109,30 @@ public class CreateSessionView extends TabActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    private void alert(){
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(
+                CreateSessionView.this );
+
+        // set title
+        alertDialogBuilder.setTitle("Fehler aufgetreten");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Ups. Es ist ein Fehler aufgetreten. Wir bitten um Entschuldigung. Wir befinden uns im Beta-Stadium")
+                .setCancelable(false)
+
+                .setNeutralButton("Entschuldigung angenommen", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(CreateSessionView.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+        // create alert dialog
+        android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
     }
 }

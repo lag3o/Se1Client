@@ -19,8 +19,10 @@ import com.gruppe2.Client.Objects.Event;
 
 import java.util.ArrayList;
 
-/**@author  Myles Sutholt
-    Diese Klasse zeigt eine Ansicht aller bereits belegten Veranstaltungen
+/**
+Diese Klasse zeigt eine Ansicht aller bereits belegten Veranstaltungen
+
+ @author  Myles Sutholt
  */
 public class MyEvents extends AppCompatActivity {
 
@@ -79,7 +81,7 @@ public class MyEvents extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_events_list, menu);
+        inflater.inflate(R.menu.menu_my_events, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -90,12 +92,20 @@ public class MyEvents extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
 
         //noinspection SimplifiableIfStatement
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.action_add:
                 handler.resetEvent();
-                Intent intent = new Intent(MyEvents.this, CreateEvent.class);
+                intent = new Intent(MyEvents.this, CreateEvent.class);
                 startActivity(intent);
+                break;
             case R.id.action_settings:
+                break;
+            case R.id.action_show_all:
+                handler.resetEvent();
+                intent = new Intent(MyEvents.this, EventsList.class);
+                startActivity(intent);
+                break;
 
         }
 

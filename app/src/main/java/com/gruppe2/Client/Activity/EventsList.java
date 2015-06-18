@@ -20,6 +20,7 @@ import com.gruppe2.Client.Database.ApplicationHandler;
 import com.gruppe2.Client.Helper.EventsViewAdapter;
 import com.gruppe2.Client.Helper.Parser;
 import com.gruppe2.Client.Objects.Event;
+import com.gruppe2.Client.SOAP.SOAPEvents;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
@@ -27,13 +28,16 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import static com.gruppe2.Client.Helper.Constants.NAMESPACE;
 import static com.gruppe2.Client.Helper.Constants.SOAP_ACTION;
 import static com.gruppe2.Client.Helper.Constants.URL;
 
-/**@author Myles Sutholt
-    Diese Klasse erzeugt eine Liste aller Veranstaltungen zur Übersicht
+/**
+Diese Klasse erzeugt eine Liste aller Veranstaltungen zur Übersicht
+
+ @author Myles Sutholt
  */
 public class EventsList extends AppCompatActivity {
 
@@ -49,18 +53,19 @@ public class EventsList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
 
+        ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());
         //Verbindungsaufbau zur SQLite Datenbank
         try {
-            AsyncEvents task = new AsyncEvents();
-            task.execute();
+            SOAPEvents task = new SOAPEvents(handler);
+            task.execute().get(5000, TimeUnit.MILLISECONDS);
         }
         catch (Exception e){
+            alert();
         }
-//Listview laden
+        events = handler.getEvents();
+        //Listview laden
 
 
-
-        while(!dataReady){}
         setContentView(R.layout.activity_events_list);
         listview = (ListView) findViewById(R.id.events_list);
 
@@ -141,11 +146,37 @@ public class EventsList extends AppCompatActivity {
             case R.id.action_add:
                 Intent intent = new Intent(EventsList.this, CreateEvent.class);
                 startActivity(intent);
+                break;
             case R.id.action_settings:
 
         }
 
             return super.onOptionsItemSelected(item);
+    }
+    private void alert(){
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(
+                EventsList.this );
+
+        // set title
+        alertDialogBuilder.setTitle("Fehler aufgetreten");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Ups. Es ist ein Fehler aufgetreten. Wir bitten um Entschuldigung. Wir befinden uns im Beta-Stadium")
+                .setCancelable(false)
+
+                .setNeutralButton("Entschuldigung angenommen", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(EventsList.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+        // create alert dialog
+        android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
     }
     @Override
     protected void onResume() {
@@ -157,106 +188,5 @@ public class EventsList extends AppCompatActivity {
         super.onPause();
     }
 
-    private void getEvents() {
 
-        String method_name = "getEvents";
-
-        SoapObject request = new SoapObject(NAMESPACE, method_name);
-        /*
-         * Set the web service envelope
-         *
-         * */
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(request);
-        HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
-        /*
-         * Call the web service and retrieve result ... how luvly <3
-         *
-         * */
-        try {
-            androidHttpTransport.debug = true;
-            androidHttpTransport.call(SOAP_ACTION, envelope);
-            Log.d("dump Request: ", androidHttpTransport.requestDump);
-            Log.d("dump response: ", androidHttpTransport.responseDump);
-
-            /** contains all events objects */
-            java.util.Vector<SoapObject> response = (java.util.Vector<SoapObject>) envelope.getResponse();
-
-
-            /** lists property count */
-
-            /** loop */
-            if (response != null) {
-                for (SoapObject cs : response) {
-                    /** temp PhongTro object */
-                    Event tempObj = new Event();
-
-                    if (cs.hasProperty("id")) {
-                        tempObj.setEventID(Integer.parseInt(cs.getPropertyAsString("id")));
-                    }
-                    if (cs.hasProperty("name")) {
-                        tempObj.setName(cs.getPropertyAsString("name"));
-                    }
-
-                    if (cs.hasProperty("dateEnd")) {
-                        tempObj.setDateEnd((new Parser().StringToTempDate(cs.getPropertyAsString("dateEnd"))));
-                    }
-
-                    if (cs.hasProperty("description")) {
-                        tempObj.setDescription(cs.getPropertyAsString("description"));
-                    }
-
-                    if (cs.hasProperty("dateStart")) {
-                        tempObj.setDateStart((new Parser().StringToTempDate(cs.getPropertyAsString("dateStart"))));
-                    }
-                    Log.d("LOG",cs.getProperty(0).toString());
-
-                    /** Adding temp PhongTro object to list */
-                    events.add(tempObj);
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            /** if an error handled events setting null */
-            events = new ArrayList<Event>();
-        }
-    }
-
-
-
-
-    public class AsyncEvents extends AsyncTask<String, Void, Void> {
-
-
-
-        protected Void doInBackground(String... params) {
-            try{
-                getEvents();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-
-                /** if an error handled events setting null */
-                events = new ArrayList<Event>();
-            }
-            dataReady = true;
-            return null;
-        }
-        protected void onPostExecute(Void result) {
-            dataReady = true;
-            Log.i("Event Data ", "onPostExecute");        }
-
-        @Override
-        protected void onPreExecute() {
-            dataReady = false;
-            Log.i("Querying Data ", "onPreExecute");
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            Log.i("Get Events ", "onProgressUpdate");
-        }
-    }
 }

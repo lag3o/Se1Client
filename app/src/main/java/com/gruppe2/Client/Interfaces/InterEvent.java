@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Created by myles on 10.06.15.
+ *
+ * Interface der Veranstaltungsobjekte
+ *
+ *@author  Myles Sutholt
  */
 public interface InterEvent {
         //private Integer id;

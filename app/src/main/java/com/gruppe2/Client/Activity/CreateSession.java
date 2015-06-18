@@ -3,6 +3,7 @@ package com.gruppe2.Client.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -20,17 +21,34 @@ import com.gruppe2.Client.Helper.Validade;
 import com.gruppe2.Client.Objects.Event;
 import com.gruppe2.Client.Database.EventsDataSource;
 import com.gruppe2.Client.Objects.Session;
+import com.gruppe2.Client.SOAP.SOAPCreateEvent;
+import com.gruppe2.Client.SOAP.SOAPEvents;
+
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.PropertyInfo;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import static com.gruppe2.Client.Helper.Constants.NAME;
+import static com.gruppe2.Client.Helper.Constants.NAMESPACE;
+import static com.gruppe2.Client.Helper.Constants.SOAP_ACTION;
 import static com.gruppe2.Client.Helper.Constants.START;
 import static com.gruppe2.Client.Helper.Constants.END;
 import static com.gruppe2.Client.Helper.Constants.DESCR;
-/**@author Myles Sutholt
-    Diese Klasse erzeugt eine gesamte Veranstaltung inklusive Termine und persistiert sie
+import static com.gruppe2.Client.Helper.Constants.URL;
+
+/**
+ Diese Klasse erzeugt eine gesamte Veranstaltung inklusive Termine und persistiert sie
+
+ @author Myles Sutholt
+
  */
 public class CreateSession extends AppCompatActivity {
 
@@ -44,6 +62,7 @@ public class CreateSession extends AppCompatActivity {
         b = getIntent().getExtras();
 
     }
+    //Handler für die Buttons, die eingebunden wurde. Ruft bestimmte Aktionen auf, wenn betätigt
     public void onClick(View view) {
         Session session;
         switch (view.getId()) {
@@ -53,6 +72,21 @@ public class CreateSession extends AppCompatActivity {
                     event.getSessions().add(session);
 
                     ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());
+
+                    /**
+                     *
+                    handler.setEvent(event);
+                    try {
+                        SOAPCreateEvent task = new SOAPCreateEvent(handler);
+                        task.execute().get(5000, TimeUnit.MILLISECONDS);
+                    }
+                    catch (Exception e){
+                        alert();
+                        handler.resetEvent();
+                        Log.d("Server Create Event", e.toString());
+                    }
+
+                     */
                     EventsDataSource datasource = (handler.getDatasource());
 
                     // ID zuweisen
@@ -60,8 +94,9 @@ public class CreateSession extends AppCompatActivity {
                     try {
                         event.setEventID(id);
                     }
-                    catch (Exception e){}
+                    catch (Exception e){ alert();}
 
+                    //Über das update des Events die lokale Persisierung anstoßen
                     handler.updateEvent(event);
                     Intent intent = new Intent(CreateSession.this, MyEvents.class);
                     ((ApplicationHandler) getApplicationContext()).resetEvent();
@@ -76,6 +111,14 @@ public class CreateSession extends AppCompatActivity {
     private Session saveSession(){
         Session session;
         try {
+            /**
+            *Test auf richtige Eingabe der verschiedenen Parameter über die Eingabefelder
+            *Zunächst Prüfung auf korrekte Angabe der Daten
+            *@exception falls eines der Daten fehlt oder das Datum in einem falschen Format eingegeben wurde.
+            *
+            *@return session, wenn alles korrekt ist.
+            * Anschließend über Erzeugung einer Veranstaltung die Prüfung ob die restlichen Parameter korrekt eingegeben wurden.
+            */
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
             simpleDateFormat.setLenient(false);
@@ -93,6 +136,7 @@ public class CreateSession extends AppCompatActivity {
             }
             Log.d("Session Create", b.getString("Date") + " " + new Parser().DateToString(session.getDateStart()));
         }
+        //Exception Handling über diverse Popups, die Fehlererkennung vereinfachen sollen
         catch (ParamMissingException exception){
             AlertDialog.Builder builder = new AlertDialog.Builder(CreateSession.this);
             builder.setTitle("Fehlende Angabe");
@@ -133,6 +177,8 @@ public class CreateSession extends AppCompatActivity {
             return null;
         }
 
+        //Falls alles richtig eingegeben wurde werden alle Eingabefelder resettet und ein Sessionobjekt zur Speicherung zurückgegeben
+
         ((EditText) findViewById(R.id.txtName)).setText("");
         ((EditText) findViewById(R.id.txtEndDate)).setText("");
         ((EditText) findViewById(R.id.txtStartDate)).setText("");
@@ -163,4 +209,31 @@ public class CreateSession extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void alert(){
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(
+                CreateSession.this );
+
+        // set title
+        alertDialogBuilder.setTitle("Fehler aufgetreten");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Ups. Es ist ein Fehler aufgetreten. Wir bitten um Entschuldigung. Wir befinden uns im Beta-Stadium")
+                .setCancelable(false)
+
+                .setNeutralButton("Entschuldigung angenommen", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(CreateSession.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+        // create alert dialog
+        android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+    }
+
 }

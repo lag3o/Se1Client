@@ -7,8 +7,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**@author: Myles Sutholt
-Parsed Datumsobjekte zu String und Strings zu Datumsobjekten
+/**
+ *Parsed Datumsobjekte zu String und Strings zu Datumsobjekten
+ *
+ *@author  Myles Sutholt
  */
 public class Parser {
 

@@ -5,7 +5,10 @@ import com.gruppe2.Client.Exceptions.ParamMissingException;
 import java.util.Date;
 
 /**
- * Created by myles on 10.06.15.
+ *
+ * Interface der Terminobjekte
+ *
+ *@author  Myles Sutholt
  */
 public interface InterSession {
     //private Integer id;

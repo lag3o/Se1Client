@@ -14,8 +14,10 @@ import android.widget.TextView;
 import com.example.myles.projecto.R;
 import com.gruppe2.Client.Objects.Event;
 
-/**@author Myles Sutholt
-Generierung der Ansicht für Veranstaltungen. Dreispaltige ListView
+/**
+ *Generierung der Ansicht für Veranstaltungen. Dreispaltige ListView
+ *
+ *@author  Myles Sutholt
  */
 public class EventsViewAdapter extends BaseAdapter{
 

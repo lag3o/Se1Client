@@ -5,8 +5,9 @@ package com.gruppe2.Client.Database;
         import android.database.sqlite.SQLiteDatabase;
         import android.database.sqlite.SQLiteOpenHelper;
         import android.util.Log;
-/**@author Myles Sutholt
-    Diese Klasse erzeugt eine SQLite Datenbank und stellt Namensflags zur Verfügung
+/**    Diese Klasse erzeugt eine SQLite Datenbank und stellt Namensflags zur Verfügung *
+ *
+ @author  Myles Sutholt
  */
 public class MySQLiteHelper extends SQLiteOpenHelper {
 

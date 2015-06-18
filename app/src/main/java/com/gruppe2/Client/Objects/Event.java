@@ -6,8 +6,10 @@ import com.gruppe2.Client.Interfaces.InterEvent;
 import java.util.ArrayList;
 import java.util.Date;
 
-/**@author Myles Sutholt
-Ein Veranstaltungsobjekt
+/**
+Ein Veranstaltungsobjekt laut Interfacespezifikation
+ *
+ *@author  Myles Sutholt
  */
 public class Event implements InterEvent {
     private Integer id;
@@ -28,6 +30,10 @@ public class Event implements InterEvent {
         this.sessions = new ArrayList<Session>();
     }
     public Event(){
+        this.sessions = new ArrayList<Session>();
+    }
+    public Event(int id) {
+        this.id = id;
         this.sessions = new ArrayList<Session>();
     }
     @Override
