@@ -45,7 +45,7 @@ public class EventsList extends AppCompatActivity {
     private static Integer EVENTID;
     private ArrayList<Event> events = new ArrayList<Event>();
     private EventsViewAdapter adapter;
-    private static boolean dataReady=false;
+    private ApplicationHandler handler;
 
 
     @Override
@@ -53,7 +53,9 @@ public class EventsList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
 
-        ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());
+
+        handler = ((ApplicationHandler) getApplicationContext());
+        handler.setEvents(new ArrayList<Event>());
         //Verbindungsaufbau zur SQLite Datenbank
         try {
             SOAPEvents task = new SOAPEvents(handler);
@@ -63,6 +65,10 @@ public class EventsList extends AppCompatActivity {
             alert();
         }
         events = handler.getEvents();
+
+        if (events.size() == 0) {
+            alert("Leider ist keine Internetverbindung möglich. Es tut uns Leid.");
+        }
         //Listview laden
 
 
@@ -144,6 +150,7 @@ public class EventsList extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         switch (item.getItemId()) {
             case R.id.action_add:
+                handler.resetEvent();
                 Intent intent = new Intent(EventsList.this, CreateEvent.class);
                 startActivity(intent);
                 break;
@@ -152,6 +159,31 @@ public class EventsList extends AppCompatActivity {
         }
 
             return super.onOptionsItemSelected(item);
+    }
+    private void alert(String msg){
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(
+                EventsList.this );
+
+        // set title
+        alertDialogBuilder.setTitle("Fehler aufgetreten");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage(msg)
+                .setCancelable(false)
+
+                .setNeutralButton("Entschuldigung angenommen", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(EventsList.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+        // create alert dialog
+        android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
     }
     private void alert(){
         android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(

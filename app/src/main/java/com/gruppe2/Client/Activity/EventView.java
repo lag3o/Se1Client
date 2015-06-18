@@ -67,6 +67,7 @@ public class EventView extends TabActivity {
         TabHost tabHost = getTabHost();
         b = new Bundle();
         try {
+            b.putInt("ID", id);
             b.putString(START, ((new Parser().DateToStringDate(event.getDateStart()))));
             b.putString(NAME, (event.getName()));
             b.putString(DESCR, (event.getDescription()));
@@ -100,7 +101,7 @@ public class EventView extends TabActivity {
                 b.putString("DateV", (new Parser().DateToStringDate(dateBundle)));
                 Intent intent1 = new Intent().setClass(this, SessionList.class);
                 intent1.putExtras(b);
-                String day = start.get(Calendar.DAY_OF_MONTH) + "." + start.get(Calendar.MONTH);
+                String day = start.get(Calendar.DAY_OF_MONTH) + "." + (start.get(Calendar.MONTH)+1);
                 TabHost.TabSpec spec1 = tabHost.newTabSpec(day).setIndicator(day, getResources().getDrawable(R.drawable.abc_tab_indicator_material));
                 spec1.setContent(intent1);
                 tabHost.addTab(spec1);
@@ -136,7 +137,6 @@ public class EventView extends TabActivity {
                 break;
             case R.id.action_edit:
                 intent = new Intent(EventView.this, CreateEvent.class);
-                intent.putExtras(b);
                 startActivity(intent);
                 break;
             case R.id.action_push:
@@ -145,8 +145,9 @@ public class EventView extends TabActivity {
             case R.id.action_delete:
                 try {
                     deleteEvent = true;
-                    SOAPDropEvent task = new SOAPDropEvent(handler);
-                    task.execute();
+                    //SOAPDropEvent task = new SOAPDropEvent(handler);
+                    //task.execute();
+                    datasource.deleteEvent(event);
                 }
                 catch (Exception e){
 

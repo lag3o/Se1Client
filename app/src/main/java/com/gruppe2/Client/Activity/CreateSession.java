@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.myles.projecto.R;
 import com.gruppe2.Client.Database.ApplicationHandler;
@@ -70,44 +71,48 @@ public class CreateSession extends AppCompatActivity {
                 session = saveSession();
                 if ( session != null) {
                     event.getSessions().add(session);
-
-                    ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());
-
-                    /**
-                     *
-                    handler.setEvent(event);
-                    try {
-                        SOAPCreateEvent task = new SOAPCreateEvent(handler);
-                        task.execute().get(5000, TimeUnit.MILLISECONDS);
-                    }
-                    catch (Exception e){
-                        alert();
-                        handler.resetEvent();
-                        Log.d("Server Create Event", e.toString());
-                    }
-
-                     */
-                    EventsDataSource datasource = (handler.getDatasource());
-
-                    // ID zuweisen
-                    int id = datasource.countEvents()+1;
-                    try {
-                        event.setEventID(id);
-                    }
-                    catch (Exception e){ alert();}
-
-                    //Über das update des Events die lokale Persisierung anstoßen
-                    handler.updateEvent(event);
-                    Intent intent = new Intent(CreateSession.this, MyEvents.class);
-                    ((ApplicationHandler) getApplicationContext()).resetEvent();
-                    startActivity(intent);
+                    createEvent();
                 }
+                break;
             case R.id.btnNew:
                 session = saveSession();
                 if ( session != null) event.getSessions().add(session);
 
         }
         }
+    private void createEvent(){
+        ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());
+
+        /**
+         *
+         handler.setEvent(event);
+         try {
+         SOAPCreateEvent task = new SOAPCreateEvent(handler);
+         task.execute().get(5000, TimeUnit.MILLISECONDS);
+         }
+         catch (Exception e){
+         alert();
+         handler.resetEvent();
+         Log.d("Server Create Event", e.toString());
+         }
+
+         */
+        EventsDataSource datasource = (handler.getDatasource());
+
+        // ID zuweisen
+        int id = (datasource.countEvents()+1)*100;
+        try {
+            event.setEventID(id);
+        }
+        catch (Exception e){
+            //alert();
+        }
+
+        //Über das update des Events die lokale Persisierung anstoßen
+        datasource.createEvent(event);
+        Intent intent = new Intent(CreateSession.this, MyEvents.class);
+        startActivity(intent);
+    }
     private Session saveSession(){
         Session session;
         try {
@@ -120,18 +125,33 @@ public class CreateSession extends AppCompatActivity {
             * Anschließend über Erzeugung einer Veranstaltung die Prüfung ob die restlichen Parameter korrekt eingegeben wurden.
             */
 
+            EditText name= ((EditText) findViewById(R.id.txtName));
+            EditText endDate= ((EditText) findViewById(R.id.txtEndDate));
+            EditText startDate= ((EditText) findViewById(R.id.txtStartDate));
+            EditText adress= ((EditText) findViewById(R.id.txtAdress));
+            EditText plz= ((EditText) findViewById(R.id.txtPLZ));
+            EditText description= ((EditText) findViewById(R.id.txtDescription));
+
+            if (controlParameter(name.getText().toString()) && (controlParameter(endDate.getText().toString()))&&
+                    (controlParameter(startDate.getText().toString())) && (controlParameter(adress.getText().toString()))&&
+                    (controlParameter(plz.getText().toString())) && (controlParameter(description.getText().toString())))
+                    {
+                createEvent();
+                return null;
+            }
+
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
             simpleDateFormat.setLenient(false);
-            Date start = simpleDateFormat.parse(b.getString("Date") + " " + (((EditText) findViewById(R.id.txtStartDate)).getText().toString()));
-            Date end = simpleDateFormat.parse(b.getString("Date") + " " +(((EditText) findViewById(R.id.txtEndDate)).getText().toString()));
+            Date start = simpleDateFormat.parse(b.getString("Date") + " " + startDate.getText().toString());
+            Date end = simpleDateFormat.parse(b.getString("Date") + " " + endDate.getText().toString());
 
             if (start == null || end == null){
                 throw new ParamMissingException("Anfangs- und/oder Endzeit");
             }
             else {
-                session = new Session(((EditText) findViewById(R.id.txtName)).getText().toString(), start, end,
-                        ((EditText) findViewById(R.id.txtAdress)).getText().toString(), ((EditText) findViewById(R.id.txtPLZ)).getText().toString(),
-                        ((EditText) findViewById(R.id.txtDescription)).getText().toString());
+                session = new Session(name.getText().toString(), start, end,
+                        adress.getText().toString(), plz.getText().toString(),
+                        description.getText().toString());
                 new Validade().validateDates(session);
             }
             Log.d("Session Create", b.getString("Date") + " " + new Parser().DateToString(session.getDateStart()));
@@ -177,6 +197,7 @@ public class CreateSession extends AppCompatActivity {
             return null;
         }
 
+
         //Falls alles richtig eingegeben wurde werden alle Eingabefelder resettet und ein Sessionobjekt zur Speicherung zurückgegeben
 
         ((EditText) findViewById(R.id.txtName)).setText("");
@@ -187,6 +208,11 @@ public class CreateSession extends AppCompatActivity {
         ((EditText) findViewById(R.id.txtDescription)).setText("");
 
         return session;
+    }
+    public boolean controlParameter (String param){
+        //String name,String dateStart, String dateEnd, String location,String description
+        if (param.toString().equalsIgnoreCase("")) return true;
+        return false;
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -209,7 +235,7 @@ public class CreateSession extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
+/**
     private void alert(){
         android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(
                 CreateSession.this );
@@ -235,5 +261,5 @@ public class CreateSession extends AppCompatActivity {
         // show it
         alertDialog.show();
     }
-
+*/
 }

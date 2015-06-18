@@ -18,6 +18,7 @@ import android.widget.EditText;
 import com.example.myles.projecto.R;
 import com.gruppe2.Client.Database.EventsDataSource;
 import com.gruppe2.Client.Database.ApplicationHandler;
+import com.gruppe2.Client.Objects.Event;
 
 import org.jboss.aerogear.android.unifiedpush.RegistrarManager;
 import org.ksoap2.SoapEnvelope;
@@ -26,6 +27,8 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
+
+import java.util.ArrayList;
 
 import static com.gruppe2.Client.Helper.Constants.NAMESPACE;
 import static com.gruppe2.Client.Helper.Constants.URL;
@@ -41,6 +44,7 @@ public class MainActivity extends AppCompatActivity{
     public Button btsave;
     public EditText userName;
     public static int userID;
+    ApplicationHandler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,14 +58,63 @@ public class MainActivity extends AppCompatActivity{
 
         btsave = (Button) findViewById(R.id.saveNick);
         userName = (EditText) findViewById(R.id.nickname);
+
+        redirect();
+
+
+    }
+    public void setUserID(){
+
+        String method_name = "addUser";
+
+        SoapObject request = new SoapObject(NAMESPACE, method_name);
+
+        PropertyInfo pi = new PropertyInfo();
+        String username = userName.getText().toString();
+        String deviceID = android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+
+        request.addProperty("username", username);
+        request.addProperty("deviceID", deviceID);
+
+        /*
+         * Set the web service envelope
+         *
+         * */
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(request);
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+        /*
+         * Call the web service and retrieve result ... how luvly <3
+         *
+         * */
+        userID = 0;
+        try {
+            androidHttpTransport.debug = true;
+            androidHttpTransport.call(SOAP_ACTION, envelope, null);
+            Log.d("dump Request: " ,androidHttpTransport.requestDump);
+            Log.d("dump response: " ,androidHttpTransport.responseDump);
+            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+            userID = Integer.parseInt(response.getValue().toString());
+
+
+            // Aufruf zur PushService Registrierung
+            ((ApplicationHandler) getApplicationContext()).getPush().registerDeviceOnPushServer(userName.getText().toString(), this);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            alert();
+        }
+
+
+
+    }
+    private void redirect(){
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         String uName = pref.getString("uName", null);
 
-
-
         if (uName!=null) {
 
-            ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());
+            handler = ((ApplicationHandler) getApplicationContext());
             datasource = (handler.getDatasource());
 
             if(datasource.isEmpty()){
@@ -110,51 +163,6 @@ public class MainActivity extends AppCompatActivity{
                 }
             });
         }
-    }
-    public void setUserID(){
-
-        String method_name = "addUser";
-
-        SoapObject request = new SoapObject(NAMESPACE, method_name);
-
-        PropertyInfo pi = new PropertyInfo();
-        String username = userName.getText().toString();
-        String deviceID = android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-
-        request.addProperty("username", username);
-        request.addProperty("deviceID", deviceID);
-
-        /*
-         * Set the web service envelope
-         *
-         * */
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(request);
-        HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
-        /*
-         * Call the web service and retrieve result ... how luvly <3
-         *
-         * */
-        userID = 0;
-        try {
-            androidHttpTransport.debug = true;
-            androidHttpTransport.call(SOAP_ACTION, envelope, null);
-            Log.d("dump Request: " ,androidHttpTransport.requestDump);
-            Log.d("dump response: " ,androidHttpTransport.responseDump);
-            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
-            userID = Integer.parseInt(response.getValue().toString());
-
-
-            // Aufruf zur PushService Registrierung
-            ((ApplicationHandler) getApplicationContext()).getPush().registerDeviceOnPushServer(userName.getText().toString(), this);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            alert();
-        }
-
-
-
     }
     public class AsyncUser extends AsyncTask<String, Void, Void> {
 
@@ -234,6 +242,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
+        redirect();
     }
 
     @Override

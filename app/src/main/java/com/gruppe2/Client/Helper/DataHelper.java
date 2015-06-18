@@ -93,36 +93,40 @@ public class DataHelper  {
             Log.d("dump Request: ", androidHttpTransport.requestDump);
             Log.d("dump response: ", androidHttpTransport.responseDump);
             SoapObject response = (SoapObject) envelope.getResponse();
-            java.util.Vector<SoapObject> responseSession = (java.util.Vector<SoapObject>) envelope.getResponse();
+            java.util.Vector<SoapObject> responseSession = (java.util.Vector<SoapObject>) response.getProperty("sessions");
 
+            int i = 0;
             /** lists property count */
             if (response.hasProperty("id")) {
                 event.setEventID(Integer.parseInt(response.getPropertyAsString("id")));
+                i++;
             }
             if (response.hasProperty("name")) {
                 event.setName(response.getPropertyAsString("name"));
+                i++;
             }
 
             if (response.hasProperty("dateEnd")) {
                 event.setDateEnd((new Parser().StringToTempDate(response.getPropertyAsString("dateEnd"))));
+                i++;
             }
 
             if (response.hasProperty("description")) {
                 event.setDescription(response.getPropertyAsString("description"));
+                i++;
             }
 
             if (response.hasProperty("dateStart")) {
                 event.setDateStart((new Parser().StringToTempDate(response.getPropertyAsString("dateStart"))));
+                i++;
             }
             /** loop */
+            ArrayList<Session> sessions = new ArrayList<Session>();
             if (response != null) {
                 for (SoapObject cs : responseSession) {
                     /** temp PhongTro object */
                     Session tempObj = new Session();
 
-                    if (cs.hasProperty("id")) {
-                        tempObj.setSessionID(Integer.parseInt(cs.getPropertyAsString("id")));
-                    }
                     if (cs.hasProperty("name")) {
                         tempObj.setName(cs.getPropertyAsString("name"));
                     }
@@ -147,13 +151,14 @@ public class DataHelper  {
                     Log.d("LOG",cs.getProperty(0).toString());
 
                     /** Adding temp PhongTro object to list */
-                    event.getSessions().add(tempObj);
+                    sessions.add(tempObj);
                 }
+                event.setSessions(sessions);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-
+            Log.d("Async GetEvent", handler.getEvent().getEventID() + " " + request.toString());
             /** if an error handled events setting null */
             event = new Event();
             getDatabase(handler);

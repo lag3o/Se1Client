@@ -44,11 +44,11 @@ Diese Klasse zeigt einen Ablaufplan einer Veranstaltung
  */
 public class SessionList extends AppCompatActivity {
 
-    private static Integer id;
-    private static Event event;
+    private Integer id;
+    private  Event event;
     private ArrayList<Session> sessions = new ArrayList<Session>();
     private ListViewAdapter adapter;
-    Bundle bundle;
+    private Bundle bundle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,7 +113,7 @@ public class SessionList extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_session_list, menu);
+        getMenuInflater().inflate(R.menu.menu_event_view, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -127,19 +127,20 @@ public class SessionList extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         switch (item.getItemId()) {
             case R.id.action_addSession:
-                intent = new Intent(SessionList.this, EditSession.class);
+                ((ApplicationHandler) getApplicationContext()).setEvent(event);
+                intent = new Intent(SessionList.this, CreateSessionView.class);
                 startActivity(intent);
                 break;
             case R.id.action_edit:
                 intent = new Intent(SessionList.this, CreateEvent.class);
-                intent.putExtras(bundle);
+                ((ApplicationHandler) getApplicationContext()).setEvent(event);
                 startActivity(intent);
                 break;
             case R.id.action_push:
                 //Push Mitteilung abfackeln
                 break;
             case R.id.action_delete:
-                //Veranstaltung löschen
+                ((ApplicationHandler) getApplicationContext()).getDatasource().deleteEvent(event);
                 break;
             case R.id.action_settings:
                 break;

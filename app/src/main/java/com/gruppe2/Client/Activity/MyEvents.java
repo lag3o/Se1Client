@@ -39,6 +39,7 @@ public class MyEvents extends AppCompatActivity {
         //Verbindungsaufbau zur SQLite Datenbank
 
         handler = ((ApplicationHandler) getApplicationContext());
+        handler.setEvents(new ArrayList<Event>());
         datasource = (handler.getDatasource());
 
         //Listview laden

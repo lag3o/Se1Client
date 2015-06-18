@@ -36,31 +36,20 @@ Diese Klasse bearbeitet Termine und persistiert sie
  */
 public class EditSession extends AppCompatActivity {
     private int i = 0;
-    private Event event = null;
+    private Event event;
+    private Bundle b;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_session);
 
-        Bundle b = getIntent().getExtras();
+        b = getIntent().getExtras();
         try{
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy");
-            simpleDateFormat.setLenient(false);
-            Date end = simpleDateFormat.parse(b.getString(END));
-            Date start = simpleDateFormat.parse(b.getString(START));
-            String name = b.getString(NAME);
-            event = new Event(b.getString(NAME), start, end, b.getString(DESCR));
-            event.setEventID(b.getInt("ID"));
-            EventsDataSource datasource = ((ApplicationHandler) getApplicationContext()).getDatasource();
-            event.setSessions(datasource.getSessions(b.getInt("ID")));
-            datasource.deleteEvent(event);
+            event = ((ApplicationHandler) getApplicationContext()).getEvent();
         }
-        catch (ParamMissingException exception){
-
-        }
-        catch (ParseException e){
-
-        }
+       catch (Exception e){
+           alert();
+       }
         if ((event.getSessions().size()) >0) updateTextFields(event.getSessions().get(i));
     }
     public void onClick(View view) {
@@ -70,17 +59,10 @@ public class EditSession extends AppCompatActivity {
                 session = saveSession();
                 if (!( session == null)) {
                     if ((event.getSessions().size()) >0) event.getSessions().set(i, session);
-
-                    ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());
-                    EventsDataSource datasource = (handler.getDatasource());
-
-                    datasource.createEvent(event);
-
-                    Intent intent = new Intent(EditSession.this, MyEvents.class);
-                    startActivity(intent);
+                    createEvent();
                 }
                 break;
-            case R.id.btnNext:
+            case R.id.btnNew:
                 session = saveSession();
                 if (session != null){
                     if ((event.getSessions().size()) <i ){
@@ -95,25 +77,70 @@ public class EditSession extends AppCompatActivity {
                 break;
         }
     }
+    private void createEvent(){
+        ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());
+
+        /**
+         *
+         handler.setEvent(event);
+         try {
+         SOAPCreateEvent task = new SOAPCreateEvent(handler);
+         task.execute().get(5000, TimeUnit.MILLISECONDS);
+         }
+         catch (Exception e){
+         alert();
+         handler.resetEvent();
+         Log.d("Server Create Event", e.toString());
+         }
+
+         */
+        EventsDataSource datasource = (handler.getDatasource());
+
+        // ID zuweisen
+        int id = (datasource.countEvents()+1)*100;
+        try {
+            event.setEventID(id);
+        }
+        catch (Exception e){
+            //alert();
+        }
+
+        //Über das update des Events die lokale Persisierung anstoßen
+        datasource.createEvent(event);
+        Intent intent = new Intent(EditSession.this, MyEvents.class);
+        startActivity(intent);
+    }
     private Session saveSession(){
         Session session;
         try {
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
-            simpleDateFormat.setLenient(false);
-            Date start = simpleDateFormat.parse(((EditText) findViewById(R.id.txtStartDate)).getText().toString());
-            Date end = simpleDateFormat.parse(((EditText) findViewById(R.id.txtEndDate)).getText().toString());
+            EditText name = ((EditText) findViewById(R.id.txtName));
+            EditText endDate = ((EditText) findViewById(R.id.txtEndDate));
+            EditText startDate = ((EditText) findViewById(R.id.txtStartDate));
+            EditText adress = ((EditText) findViewById(R.id.txtAdress));
+            EditText plz = ((EditText) findViewById(R.id.txtPLZ));
+            EditText description = ((EditText) findViewById(R.id.txtDescription));
 
-            if (start == null || end == null){
-                throw new ParamMissingException("Anfangs- und/oder Endzeit");
+            if (controlParameter(name.getText().toString()) && (controlParameter(endDate.getText().toString())) &&
+                    (controlParameter(startDate.getText().toString())) && (controlParameter(adress.getText().toString())) &&
+                    (controlParameter(plz.getText().toString())) && (controlParameter(description.getText().toString()))) {
+                createEvent();
+                return null;
             }
-            else {
-                session = new Session(((EditText) findViewById(R.id.txtName)).getText().toString(), start, end,
-                        ((EditText) findViewById(R.id.txtAdress)).getText().toString(), ((EditText) findViewById(R.id.txtPLZ)).getText().toString(),
-                        ((EditText) findViewById(R.id.txtDescription)).getText().toString());
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
+            simpleDateFormat.setLenient(false);
+            Date start = simpleDateFormat.parse(b.getString("Date") + " " + startDate.getText().toString());
+            Date end = simpleDateFormat.parse(b.getString("Date") + " " + endDate.getText().toString());
+
+            if (start == null || end == null) {
+                throw new ParamMissingException("Anfangs- und/oder Endzeit");
+            } else {
+                session = new Session(name.getText().toString(), start, end,
+                        adress.getText().toString(), plz.getText().toString(),
+                        description.getText().toString());
                 new Validade().validateDates(session);
             }
-
         }
         catch (ParamMissingException exception){
             AlertDialog.Builder builder = new AlertDialog.Builder(EditSession.this);
@@ -164,11 +191,17 @@ public class EditSession extends AppCompatActivity {
 
         return session;
     }
+
+    public boolean controlParameter (String param){
+        //String name,String dateStart, String dateEnd, String location,String description
+        if (param.toString().equalsIgnoreCase("")) return true;
+        return false;
+    }
     private void updateTextFields(Session session){
 
         ((EditText) findViewById(R.id.txtName)).setText(session.getName());
-        ((EditText) findViewById(R.id.txtEndDate)).setText((new Parser().DateToString(session.getDateEnd())));
-        ((EditText) findViewById(R.id.txtStartDate)).setText((new Parser().DateToString(session.getDateStart())));
+        ((EditText) findViewById(R.id.txtEndDate)).setText((new Parser().DateToStringTime(session.getDateEnd())));
+        ((EditText) findViewById(R.id.txtStartDate)).setText((new Parser().DateToStringTime(session.getDateStart())));
         ((EditText) findViewById(R.id.txtAdress)).setText(session.getLocation());
         ((EditText) findViewById(R.id.txtPLZ)).setText(session.getPlz());
         ((EditText) findViewById(R.id.txtDescription)).setText(session.getDescription());
@@ -193,5 +226,30 @@ public class EditSession extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    private void alert(){
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(
+                EditSession.this );
+
+        // set title
+        alertDialogBuilder.setTitle("Fehler aufgetreten");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Ups. Es ist ein Fehler aufgetreten. Wir bitten um Entschuldigung. Wir befinden uns im Beta-Stadium")
+                .setCancelable(false)
+
+                .setNeutralButton("Entschuldigung angenommen", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(EditSession.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+        // create alert dialog
+        android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
     }
 }

@@ -41,7 +41,7 @@ public class EventsDataSource {
     }
 
     public void createEvent(Event event) {
-        try {
+       // try {
             ContentValues values = new ContentValues();
             values.put(MySQLiteHelper.EVENT_ID, event.getEventID());
             values.put(MySQLiteHelper.EVENT_NAME, event.getName());
@@ -51,13 +51,12 @@ public class EventsDataSource {
 
             long insertId = database.insert(MySQLiteHelper.TABLE_EVENTS, null,
                     values);
-            for (int i = 0; i < event.getSessions().size(); i++) {
+            for (int i = 0; i < event.getSessions().size(); i++)
                 createSession(event.getSessions().get(i), insertId);
-            }
-        }
+        /**}
         catch (Exception e){
             Log.i("createEvent Database", e.toString());
-        }
+        }*/
     }
 
 
@@ -80,7 +79,7 @@ public class EventsDataSource {
             Log.i("createSession Database", exception.toString());
         }
         catch (Exception e){
-            Log.i("createEvent Database", e.toString());
+            Log.i("createSession-Database", e.toString());
         }
     }
 
@@ -88,11 +87,11 @@ public class EventsDataSource {
         try {
             long id = event.getEventID();
 
-            System.out.println("Event deleted with id: " + id);
             database.delete(MySQLiteHelper.TABLE_EVENTS, MySQLiteHelper.EVENT_ID
                     + " = " + id, null);
             database.delete(MySQLiteHelper.TABLE_SESSIONS, MySQLiteHelper.EVENT_ID
                     + " = " + id, null);
+            System.out.println("Event deleted with id: " + id);
         }
         catch (Exception e){
             Log.i("Create Session Local", "Event nicht vorhanden " + e.toString());
@@ -103,31 +102,30 @@ public class EventsDataSource {
         ArrayList<Event> events = new ArrayList<Event>();
         Cursor cursor;
         try {
-            cursor = database.rawQuery("Select * FROM " + MySQLiteHelper.TABLE_EVENTS, null);
+            cursor = database.rawQuery("Select * FROM " + MySQLiteHelper.TABLE_EVENTS + " ORDER BY " + MySQLiteHelper.EVENT_ID, null);
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 Event event = new Event();
                 String eventName = cursorToEvent(cursor).getName();
                 int id = cursorToEvent(cursor).getEventID();
                 Date start = (cursorToEvent(cursor).getDateStart());
-                try {
-                    event.setName(eventName);
-                    event.setEventID(id);
-                    event.setDateStart(start);
-                } catch (ParamMissingException ex) {
-                    Log.i("createEvent Database", ex.toString());
-                }
+                event.setName(eventName);
+                event.setEventID(id);
+                event.setDateStart(start);
 
                 events.add(event);
 
                 cursor.moveToNext();
-                cursor.close();
             }
+            cursor.close();
+        }
+         catch (ParamMissingException ex) {
+            // make sure to close the cursor
+            Log.i("getEvents-Database", ex.toString());
         }
         catch (Exception e) {
-            Log.i("createEvent Database", e.toString());
+            Log.i("getEvents Database", e.toString());
         }
-        // make sure to close the cursor
         return events;
     }
 
@@ -148,7 +146,7 @@ public class EventsDataSource {
             cursor.close();
         }
         catch (Exception e) {
-            Log.i("createEvent Database", e.toString());
+            Log.i("getSessions Database", e.toString());
         }
         return sessions;
     }
@@ -166,11 +164,9 @@ public class EventsDataSource {
 
         }
         catch (Exception e) {
-            Log.i("createEvent Database", e.toString());
+            Log.i("isEmpty Database", e.toString());
         }
-        finally {
-            return true;
-        }
+        return true;
     }
     public int countEvents(){
         int i = 0;
@@ -181,7 +177,7 @@ public class EventsDataSource {
             cursor.close();
         }
         catch (Exception e) {
-            Log.i("createEvent Database", e.toString());
+            Log.i("countEvents Database", e.toString());
         }
         return i;
     }

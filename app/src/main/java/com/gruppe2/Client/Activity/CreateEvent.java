@@ -44,12 +44,10 @@ public class CreateEvent extends AppCompatActivity {
 
 
         //Bundle entpacken und falls eine ID vorhanden ist die Datenfelder befüllen
-        bundle = getIntent().getExtras();
-        if (bundle != null) {
-            if (bundle.containsKey("ID")) {
+        ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());;
+        if (handler.getEvent() != null) {
 
-                EventsDataSource datasource = ((ApplicationHandler) getApplicationContext()).getDatasource();
-                Event event = datasource.getEvent(bundle.getInt("ID"));
+                Event event = handler.getEvent();
 
 
                 ((EditText) findViewById(R.id.txtName)).setText(event.getName());
@@ -57,7 +55,6 @@ public class CreateEvent extends AppCompatActivity {
                 ((EditText) findViewById(R.id.txtEndDate)).setText((new Parser().DateToString(event.getDateEnd())));
                 ((EditText) findViewById(R.id.txtStartDate)).setText((new Parser().DateToString(event.getDateStart())));
             }
-        }
 
             //Button Clickable machen
             Button btn = (Button) findViewById(R.id.btnSaveEvent);

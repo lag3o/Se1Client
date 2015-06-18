@@ -7,12 +7,17 @@ package com.gruppe2.Client.Helper;
 
 import org.jboss.aerogear.android.unifiedpush.MessageHandler;
 
+import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 
 import com.example.myles.projecto.R;
+import com.gruppe2.Client.Activity.MainActivity;
 
 public class NotifyingHandler implements MessageHandler {
 
@@ -31,9 +36,26 @@ public class NotifyingHandler implements MessageHandler {
                         .setContentTitle("Neuigkeiten")
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
-                        .setContentText(msg);
+                        .setContentText(msg)
+                        .setAutoCancel(true);
 
+
+        Intent intent = new Intent(context, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(MainActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(intent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        // mId allows you to update the notification later on.
         notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+
     }
 
     @Override

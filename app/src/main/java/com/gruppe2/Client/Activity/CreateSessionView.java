@@ -51,8 +51,9 @@ public class CreateSessionView extends TabActivity {
             dateStart = simpleDateFormat.parse((b.getString(START) + " 00:00"));
         }
         catch (Exception e){
-
         }
+        ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());
+        event = handler.getEvent();
         if (event == null) {
             try {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
@@ -66,8 +67,9 @@ public class CreateSessionView extends TabActivity {
             } catch (ParseException e) {
                 alert();
             }
+            handler.setEvent(event);
         }
-        ((ApplicationHandler) getApplicationContext()).setEvent(event);
+
 
         TabHost tabHost = getTabHost();
 
@@ -79,7 +81,13 @@ public class CreateSessionView extends TabActivity {
 
 
             b.putString("Date", (new Parser().DateToStringDate(start.getTime())));
-            Intent intent1 = new Intent().setClass(this, CreateSession.class);
+            Intent intent1;
+            if (event.getEventID() != null) {
+                intent1 = new Intent().setClass(this, CreateSession.class);
+            }
+            else{
+                intent1 = new Intent().setClass(this, EditSession.class);
+            }
             intent1.putExtras(b);
             String day = start.get(Calendar.DAY_OF_MONTH) + "." + start.get(Calendar.MONTH);
             TabHost.TabSpec spec1 = tabHost.newTabSpec(day).setIndicator(day, getResources().getDrawable(R.drawable.abc_tab_indicator_material));

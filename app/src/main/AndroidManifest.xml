@@ -109,15 +109,27 @@
 
         <activity
             android:name="com.gruppe2.Client.Activity.EditSession"
-            android:label="@string/title_activity_edit_session" >
+            android:label="@string/title_activity_edit_session"
+            android:parentActivityName="com.gruppe2.Client.Activity.MyEvents" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.gruppe2.Client.Activity.MyEvents" />
         </activity>
         <activity
             android:name="com.gruppe2.Client.Activity.EventView"
-            android:label="@string/title_activity_event_view" >
+            android:label="@string/title_activity_event_view"
+            android:parentActivityName="com.gruppe2.Client.Activity.MyEvents" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.gruppe2.Client.Activity.MyEvents" />
         </activity>
         <activity
             android:name="com.gruppe2.Client.Activity.EventDetail"
-            android:label="@string/title_activity_event_detail" >
+            android:label="@string/title_activity_event_detail"
+            android:parentActivityName="com.gruppe2.Client.Activity.MyEvents" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.gruppe2.Client.Activity.MyEvents" />
         </activity>
     </application>
 
