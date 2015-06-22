@@ -90,15 +90,15 @@ public class CreateEvent extends AppCompatActivity {
     }
 
 
+    /**
+     *Test auf richtige Eingabe der verschiedenen Parameter über die Eingabefelder
+     *Zunächst Prüfung auf korrekte Angabe der Daten
+     *@exception :falls eines der Daten fehlt oder das Datum in einem falschen Format eingegeben wurde.
+     *
+     * Anschließend über Erzeugung einer Veranstaltung die Prüfung ob die restlichen Parameter korrekt eingegeben wurden.
+     */
     private boolean saveEvent(){
         try {
-            /**
-             *Test auf richtige Eingabe der verschiedenen Parameter über die Eingabefelder
-             *Zunächst Prüfung auf korrekte Angabe der Daten
-             *@exception falls eines der Daten fehlt oder das Datum in einem falschen Format eingegeben wurde.
-             *
-             * Anschließend über Erzeugung einer Veranstaltung die Prüfung ob die restlichen Parameter korrekt eingegeben wurden.
-             */
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
             simpleDateFormat.setLenient(false);
             Date start = simpleDateFormat.parse(((EditText) findViewById(R.id.txtStartDate)).getText().toString());
