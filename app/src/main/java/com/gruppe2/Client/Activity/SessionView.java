@@ -4,6 +4,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -45,30 +47,32 @@ public class SessionView extends AppCompatActivity {
         ((TextView) findViewById(R.id.time)).setText(b.getString(START));
         ((TextView) findViewById(R.id.description)).setText(b.getString(DESCR));
         ((TextView) findViewById(R.id.location)).setText(b.getString(LOC));
-
+        flag = false;
         ImageButton btn = (ImageButton) findViewById(R.id.navigation);
 
         List<Address> addresses = null;
 
-        try {
-            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-            addresses = geocoder.getFromLocationName(b.getString(LOC), 1);
-            if(addresses.size() > 0) {
-                latitude = addresses.get(0).getLatitude();
-                longitude = addresses.get(0).getLongitude();
-                flag =true;
+        //Prüft ob eine Netzwerkverbidnung vorhanden ist. Falls ja wird der geocode (Latitude und longitude) abgerufen
+        if(isOnline()) {
+            try {
+                Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+                addresses = geocoder.getFromLocationName(b.getString(LOC), 1);
+                if (addresses.size() > 0) {
+                    latitude = addresses.get(0).getLatitude();
+                    longitude = addresses.get(0).getLongitude();
+                    flag = true;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            flag=false;
         }
 
-
+        //Startet Maps, wenn geocode ermittelt werden konnte und der Nutzer auf den Button klickt. Falls nicht erscheint eine Fehlermeldung
         btn.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if (flag = true){
+                if (flag == true){
                     Uri gmmIntentUri = Uri.parse("geo:" + latitude + "," + longitude);
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                     mapIntent.setPackage("com.google.android.apps.maps");
@@ -116,10 +120,10 @@ public class SessionView extends AppCompatActivity {
 
         // set dialog message
         alertDialogBuilder
-                .setMessage("Ups. Es ist ein Fehler aufgetreten. Wir bitten um Entschuldigung. Wir befinden uns im Beta-Stadium")
+                .setMessage("Es ist keine Internetverbindung vorhanden. Daher kann Google Maps nicht aufgerufen werden")
                 .setCancelable(false)
 
-                .setNeutralButton("Entschuldigung angenommen", new DialogInterface.OnClickListener() {
+                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                     }
                 });
@@ -128,6 +132,18 @@ public class SessionView extends AppCompatActivity {
         android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
 
         // show it
-        alertDialog.show();
+        try {
+            alertDialog.show();
+        }
+        catch (Exception e){
+
+        }
+    }
+    //Prüfung ob Netzwerkverbindung vorhanden ist.
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }

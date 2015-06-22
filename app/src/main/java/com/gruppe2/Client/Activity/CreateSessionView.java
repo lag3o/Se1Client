@@ -26,7 +26,7 @@ import static com.gruppe2.Client.Helper.Constants.NAME;
 import static com.gruppe2.Client.Helper.Constants.START;
 
 /**
-Diese Klasse erzeugt eine VTabübersicht. Dabei wird für jeden Tag ein eigener Tab erzeugt, welchem das Datum
+Diese Klasse erzeugt eine Tabübersicht. Dabei wird für jeden Tag ein eigener Tab erzeugt, welchem das Datum
  übergeben wird.
 
  @author  Myles Sutholt
@@ -42,26 +42,23 @@ public class CreateSessionView extends TabActivity {
         setContentView(R.layout.activity_event_view);
 
         Bundle b = getIntent().getExtras();
-        Date dateEnd = new Date();
-        Date dateStart = new Date();
-        try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
-            simpleDateFormat.setLenient(false);
-            dateEnd = simpleDateFormat.parse((b.getString(END) + " 23:59"));
-            dateStart = simpleDateFormat.parse((b.getString(START) + " 00:00"));
-        }
-        catch (Exception e){
-        }
+
         ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());
         event = handler.getEvent();
+        Date dateEnd = new Date();
+        Date dateStart = new Date();
+        /*
+        Prüfung ob in der Application Class ein Event-Objekt vorhanden ist. Falls nicht wird eins erzeugt.
+        Es erfolgt eine Fehlermeldung bei Exception
+         */
         if (event == null) {
             try {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
                 simpleDateFormat.setLenient(false);
-                Date end = simpleDateFormat.parse((b.getString(END) + " 23:59"));
-                Date start = simpleDateFormat.parse((b.getString(START) + " 00:00"));
+                dateEnd = simpleDateFormat.parse((b.getString(END) + " 23:59"));
+                dateStart = simpleDateFormat.parse((b.getString(START) + " 00:00"));
 
-                event = new Event(b.getString(NAME), start, end, b.getString(DESCR));
+                event = new Event(b.getString(NAME), dateStart, dateEnd, b.getString(DESCR));
             } catch (ParamMissingException exception) {
                 alert();
             } catch (ParseException e) {
@@ -69,8 +66,19 @@ public class CreateSessionView extends TabActivity {
             }
             handler.setEvent(event);
         }
+        else{
+            dateEnd = event.getDateEnd();
+            dateStart = event.getDateStart();
+            b = new Bundle();
+        }
 
 
+        /*
+        Erzeugt n Tabs. Wobei n die Anzahl an Tagen ist, die eine Veranstaltung dauert und übergibt jeweils das Datum
+        an den Tab, damit die CreateSession/EditSession weiß zu welchem Tag sie gehört.
+
+        Jeder Tab wird mit dem Tag und dem Monat beschriftet
+         */
         TabHost tabHost = getTabHost();
 
         Calendar end = Calendar.getInstance();
@@ -82,7 +90,7 @@ public class CreateSessionView extends TabActivity {
 
             b.putString("Date", (new Parser().DateToStringDate(start.getTime())));
             Intent intent1;
-            if (event.getEventID() != null) {
+            if (event.getEventID() == -1) {
                 intent1 = new Intent().setClass(this, CreateSession.class);
             }
             else{
@@ -141,6 +149,11 @@ public class CreateSessionView extends TabActivity {
         android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
 
         // show it
-        alertDialog.show();
+        try {
+            alertDialog.show();
+        }
+        catch (Exception e){
+
+        }
     }
 }

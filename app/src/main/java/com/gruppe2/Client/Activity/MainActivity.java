@@ -41,10 +41,10 @@ Diese Klasse registriert einen Benutzer und entscheidet welche Ansicht er sieht
  */
 public class MainActivity extends AppCompatActivity{
     private EventsDataSource datasource;
-    public Button btsave;
-    public EditText userName;
-    public static int userID;
-    ApplicationHandler handler;
+    private Button btsave;
+    private EditText userName;
+    private int userID;
+    private ApplicationHandler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity{
         userName = (EditText) findViewById(R.id.nickname);
 
         redirect();
+
 
 
     }
@@ -108,6 +109,13 @@ public class MainActivity extends AppCompatActivity{
 
 
     }
+    /*
+    Trifft die Entscheidung wo hingeleitet wird.
+    Bei initialem Start -> Registrierung
+    Bei Start ohne lokalen Daten -> Abruf der Veranstaltungen vom Server
+    Bei vorhandenen lokalen Daten -> Anzeige der belegten Veranstaltungen
+    Bei aktiver Veranstaltung (zur Zeit stattfindend) -> Zur Ansicht dieser Veranstaltung
+     */
     private void redirect(){
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         String uName = pref.getString("uName", null);
@@ -116,6 +124,7 @@ public class MainActivity extends AppCompatActivity{
 
             handler = ((ApplicationHandler) getApplicationContext());
             datasource = (handler.getDatasource());
+            handler.setUserID(pref.getInt("uID", -1));
 
             if(datasource.isEmpty()){
                 Intent intent = new Intent(MainActivity.this, EventsList.class);
@@ -123,9 +132,7 @@ public class MainActivity extends AppCompatActivity{
             }
             else if (datasource.isActive()!= null){
                 Intent intent = new Intent(MainActivity.this, EventView.class);
-                Bundle b = new Bundle();
-                b.putInt("ID", datasource.isActive()); //Your id
-                intent.putExtras(b); //Put your id to your next Intent
+                handler.setEvent(datasource.getEvent(datasource.isActive())); //Your id
                 startActivity(intent);
             }
             else {
@@ -236,7 +243,12 @@ public class MainActivity extends AppCompatActivity{
         android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
 
         // show it
-        alertDialog.show();
+        try {
+            alertDialog.show();
+        }
+        catch (Exception e){
+
+        }
     }
 
     @Override

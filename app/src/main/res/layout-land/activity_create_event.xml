@@ -9,20 +9,11 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
+        android:text="Weiter"
         android:id="@+id/btnSaveEvent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/button2"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -31,8 +22,8 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/button2"
-        android:layout_toEndOf="@+id/button2" />
+        android:layout_toRightOf="@+id/textView4"
+        android:layout_toEndOf="@+id/textView4" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -59,7 +50,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/editText4"
+        android:id="@+id/txtDescriptionescription"
         android:inputType="none"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
@@ -109,7 +100,7 @@
         android:layout_height="wrap_content"
         android:text="Beschreibung"
         android:id="@+id/textView4"
-        android:layout_centerVertical="true"
+        android:layout_alignBottom="@+id/txtDescriptionescription"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 

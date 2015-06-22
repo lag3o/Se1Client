@@ -25,6 +25,7 @@ public class ApplicationHandler extends Application  {
     private Event event;
     private ArrayList<Event> events;
     private final NotifyingHandler NHANDLER = new NotifyingHandler();
+    private int userID;
 
     public ApplicationHandler(){}
 
@@ -80,4 +81,17 @@ public class ApplicationHandler extends Application  {
         this.events = events;
     }
 
+    public int getUserID() {
+        return userID;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+    public boolean isAdmin(){
+        if(this.userID == event.getUserID()){
+            return true;
+        }
+        return false;
+    }
 }

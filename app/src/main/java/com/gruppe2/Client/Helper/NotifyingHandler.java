@@ -2,7 +2,7 @@ package com.gruppe2.Client.Helper;
 
 /**
  *
- *@author  Malte Lange
+ *@author  Malte Lange, Myles Sutholt
  */
 
 import org.jboss.aerogear.android.unifiedpush.MessageHandler;
@@ -18,6 +18,7 @@ import android.support.v4.app.TaskStackBuilder;
 
 import com.example.myles.projecto.R;
 import com.gruppe2.Client.Activity.MainActivity;
+import com.gruppe2.Client.Database.ApplicationHandler;
 
 public class NotifyingHandler implements MessageHandler {
 
@@ -33,7 +34,8 @@ public class NotifyingHandler implements MessageHandler {
         NotificationCompat.Builder mBuilder =  // 3
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.mipmap.ic_majom)
-                        .setContentTitle("Neuigkeiten")
+                        //.setContentTitle("Neuigkeiten")
+                        .setContentTitle(((ApplicationHandler)context.getApplicationContext()).getDatasource().getEvent(4).getName())
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
                         .setContentText(msg)
@@ -42,6 +44,8 @@ public class NotifyingHandler implements MessageHandler {
 
         Intent intent = new Intent(context, MainActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        int eventID = message.getInt("eventID");
+        ((ApplicationHandler)context.getApplicationContext()).getDatasource().createMessage(message.getString("alert"), eventID);
         // Adds the back stack for the Intent (but not the Intent itself)
         stackBuilder.addParentStack(MainActivity.class);
         // Adds the Intent that starts the Activity to the top of the stack

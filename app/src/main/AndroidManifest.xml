@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <permission
         android:name="com.gruppe2.Client.Activity.MainActivity.C2D_MESSAGE"
@@ -130,6 +131,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.gruppe2.Client.Activity.MyEvents" />
+        </activity>
+        <activity
+            android:name="com.gruppe2.Client.Activity.Messages"
+            android:label="@string/title_activity_mesages"
+            android:parentActivityName="com.gruppe2.Client.Activity.EventView" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.gruppe2.Client.Activity.EventView" />
         </activity>
     </application>
 

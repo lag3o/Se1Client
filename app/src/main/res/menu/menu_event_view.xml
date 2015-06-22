@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.gruppe2.Client.Activity.EventView">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
+    <item android:id="@+id/action_showPush" android:title="Alle Nachrichten"
         android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/action_delete"
         android:icon="@android:drawable/ic_delete"
@@ -24,6 +24,16 @@
     <item
         android:id="@+id/action_addSession"
         android:title="Termin hinzufügen"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/action_all"
+        android:title="Alle Veranstaltungen"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/action_show_my"
+        android:title="Meine Veranstaltungen"
         app:showAsAction="never"
         />
 </menu>

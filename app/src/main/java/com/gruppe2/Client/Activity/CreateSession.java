@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.myles.projecto.R;
 import com.gruppe2.Client.Database.ApplicationHandler;
@@ -77,9 +78,14 @@ public class CreateSession extends AppCompatActivity {
             case R.id.btnNew:
                 session = saveSession();
                 if ( session != null) event.getSessions().add(session);
+                Toast.makeText(this, "Termin erstellt", Toast.LENGTH_SHORT).show();
 
         }
-        }
+    }
+    /*
+    Die Veranstaltung erzeugen. Temporär, weil der Server dies nicht beherrscht lokal mit selbst errechneter ID.
+    SOAP für Serverkommunikation allerdings vorhanden
+     */
     private void createEvent(){
         ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());
 
@@ -100,30 +106,32 @@ public class CreateSession extends AppCompatActivity {
         EventsDataSource datasource = (handler.getDatasource());
 
         // ID zuweisen
-        int id = (datasource.countEvents()+1)*100;
-        try {
-            event.setEventID(id);
-        }
-        catch (Exception e){
-            //alert();
+        int id1 = event.getEventID();
+        if (event.getEventID() == -1) {
+            int id = (datasource.countEvents() + 1) * 100;
+            try {
+                event.setEventID(id);
+            } catch (Exception e) {
+                //alert();
+            }
         }
 
         //Über das update des Events die lokale Persisierung anstoßen
-        datasource.createEvent(event);
+        handler.updateEvent(event);
         Intent intent = new Intent(CreateSession.this, MyEvents.class);
         startActivity(intent);
     }
+    /**
+     *Test auf richtige Eingabe der verschiedenen Parameter über die Eingabefelder
+     *Zunächst Prüfung auf korrekte Angabe der Daten
+     *@exception : falls eines der Daten fehlt oder das Datum in einem falschen Format eingegeben wurde.
+     *
+     *@return session: wenn alles korrekt ist.
+     * Anschließend über Erzeugung einer Veranstaltung die Prüfung ob die restlichen Parameter korrekt eingegeben wurden.
+     */
     private Session saveSession(){
         Session session;
         try {
-            /**
-            *Test auf richtige Eingabe der verschiedenen Parameter über die Eingabefelder
-            *Zunächst Prüfung auf korrekte Angabe der Daten
-            *@exception falls eines der Daten fehlt oder das Datum in einem falschen Format eingegeben wurde.
-            *
-            *@return session, wenn alles korrekt ist.
-            * Anschließend über Erzeugung einer Veranstaltung die Prüfung ob die restlichen Parameter korrekt eingegeben wurden.
-            */
 
             EditText name= ((EditText) findViewById(R.id.txtName));
             EditText endDate= ((EditText) findViewById(R.id.txtEndDate));

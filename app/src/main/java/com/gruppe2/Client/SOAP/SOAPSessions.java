@@ -5,28 +5,18 @@ import android.util.Log;
 
 import com.gruppe2.Client.Database.ApplicationHandler;
 import com.gruppe2.Client.Helper.DataHelper;
-import com.gruppe2.Client.Objects.Event;
 
 /**
- *
- * Der AsyncTask, der eine Serveranfrage für ein Veranstaltungsobjekt initiiert
- *
- *@author  Myles Sutholt
+ * Created by myles on 21.06.15.
  */
-
-
-public class SOAPEvent extends AsyncTask<String, Void, Void>  {
-
+public class SOAPSessions  extends AsyncTask<String, Void, Void> {
     private ApplicationHandler handler;
-    private int id;
-    public SOAPEvent(ApplicationHandler handler, int id){
+    public SOAPSessions(ApplicationHandler handler){
         super();
         this.handler = handler;
-        this.id = id;
 
     }
     protected Void doInBackground(String... params) {
-        new DataHelper().getEvent(handler, id);
         return null;
     }
     protected void onPostExecute(Void result) {
@@ -41,4 +31,5 @@ public class SOAPEvent extends AsyncTask<String, Void, Void>  {
     protected void onProgressUpdate(Void... values) {
         Log.i("Create User ", "onProgressUpdate");
     }
+
 }

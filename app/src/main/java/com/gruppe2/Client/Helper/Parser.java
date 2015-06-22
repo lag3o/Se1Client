@@ -41,9 +41,9 @@ public class Parser {
         String strDate = df.format(date);
         return (df.format(date));
     }
-    public Date DatetoDate(Date date){
+    public Date DateToDateTime(Date date){
         try {
-            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
             return df.parse(df.format(date));
         }
         catch(ParseException e){
@@ -64,7 +64,7 @@ public class Parser {
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
             df.setLenient(false);
             Date newdate = df.parse(date);
-            Date finDate = DateToDate(newdate);
+            Date finDate = DateToDateTime(newdate);
             Log.d("Test","");
             return finDate;
         }

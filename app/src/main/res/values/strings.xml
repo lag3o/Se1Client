@@ -15,4 +15,5 @@
     <string name="title_activity_edit_session">Termin bearbeiten</string>
     <string name="title_activity_event_view">EventView</string>
     <string name="title_activity_event_detail">EventDetail</string>
+    <string name="title_activity_mesages">Nachrichten</string>
 </resources>

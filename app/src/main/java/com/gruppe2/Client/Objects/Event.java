@@ -28,9 +28,11 @@ public class Event implements InterEvent {
         this.dateStart = startDate;
         this.description = description;
         this.sessions = new ArrayList<Session>();
+        this.id = -1;
     }
     public Event(){
         this.sessions = new ArrayList<Session>();
+        this.id = -1;
     }
     public Event(int id) {
         this.id = id;
@@ -123,4 +125,11 @@ public class Event implements InterEvent {
         return false;
     }
 
+    public int getUserID() {
+        return userID;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
 }

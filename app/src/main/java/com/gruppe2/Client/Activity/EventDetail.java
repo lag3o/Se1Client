@@ -4,16 +4,22 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.myles.projecto.R;
 import com.gruppe2.Client.Database.ApplicationHandler;
 import com.gruppe2.Client.Helper.Parser;
 import com.gruppe2.Client.Objects.Event;
+import com.gruppe2.Client.SOAP.SOAPPush;
+
+import java.util.concurrent.TimeUnit;
 
 import static com.gruppe2.Client.Helper.Constants.DESCR;
 import static com.gruppe2.Client.Helper.Constants.LOC;
@@ -25,13 +31,16 @@ Diese Klasse erzeugt eine Ansicht über die Veranstaltungsdetails
  @author  Myles Sutholt
 
  */
-public class EventDetail extends ActionBarActivity {
+public class EventDetail extends AppCompatActivity {
     private Event event;
+    private String value;
+    private ApplicationHandler handler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_detail);
-        event = ((ApplicationHandler) getApplicationContext()).getEvent();
+        handler = ((ApplicationHandler) getApplicationContext());
+        event = handler.getEvent();
         try {
             TextView text = (TextView) findViewById(R.id.name);
             text.setText(event.getName());
@@ -50,43 +59,31 @@ public class EventDetail extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         MenuInflater inflater = getMenuInflater();
-        getMenuInflater().inflate(R.menu.menu_event_view, menu);
+        if (handler.isAdmin()) {
+            getMenuInflater().inflate(R.menu.menu_event_view, menu);
+        }
+        else {
+            getMenuInflater().inflate(R.menu.menu_event, menu);
+        }
+
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+     @Override
+     public boolean onOptionsItemSelected(MenuItem item) {
+         // Handle action bar item clicks here. The action bar will
+         // automatically handle clicks on the Home/Up button, so long
+         // as you specify a parent activity in AndroidManifest.xml.
+         int id = item.getItemId();
 
-        Intent intent;
-        //noinspection SimplifiableIfStatement
-        switch (item.getItemId()) {
-            case R.id.action_addSession:
-                ((ApplicationHandler) getApplicationContext()).setEvent(event);
-                intent = new Intent(EventDetail.this, CreateSessionView.class);
-                startActivity(intent);
-                break;
-            case R.id.action_edit:
-                ((ApplicationHandler) getApplicationContext()).setEvent(event);
-                intent = new Intent(EventDetail.this, CreateEvent.class);
-                startActivity(intent);
-                break;
-            case R.id.action_push:
-                //Push Mitteilung abfackeln
-                break;
-            case R.id.action_delete:
-                ((ApplicationHandler) getApplicationContext()).getDatasource().deleteEvent(event);
-                break;
-            case R.id.action_settings:
-                break;
-        }
+         Intent intent;
+         //noinspection SimplifiableIfStatement
+
+
         return super.onOptionsItemSelected(item);
-    }
+     }
     private void alert(){
-        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 EventDetail.this );
 
         // set title
@@ -99,15 +96,21 @@ public class EventDetail extends ActionBarActivity {
 
                 .setNeutralButton("Entschuldigung angenommen", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(EventDetail.this, MainActivity.class);
+                        Intent intent = new Intent(EventDetail.this, EventsList.class);
                         startActivity(intent);
                     }
                 });
 
         // create alert dialog
-        android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+        AlertDialog alertDialog = alertDialogBuilder.create();
 
         // show it
-        alertDialog.show();
+        try {
+            alertDialog.show();
+        }
+        catch (Exception e){
+
+        }
     }
+
 }

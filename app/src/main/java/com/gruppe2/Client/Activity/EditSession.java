@@ -47,9 +47,9 @@ public class EditSession extends AppCompatActivity {
         try{
             event = ((ApplicationHandler) getApplicationContext()).getEvent();
         }
-       catch (Exception e){
+        catch (Exception e){
            alert();
-       }
+        }
         if ((event.getSessions().size()) >0) updateTextFields(event.getSessions().get(i));
     }
     public void onClick(View view) {
@@ -77,7 +77,8 @@ public class EditSession extends AppCompatActivity {
                 break;
         }
     }
-    private void createEvent(){
+    // Erzeugt analog zur Klasse CreateEvent ein Veranstaltungsobjekt und persisitiert dieses
+    private void createEvent() {
         ApplicationHandler handler = ((ApplicationHandler) getApplicationContext());
 
         /**
@@ -97,19 +98,30 @@ public class EditSession extends AppCompatActivity {
         EventsDataSource datasource = (handler.getDatasource());
 
         // ID zuweisen
-        int id = (datasource.countEvents()+1)*100;
-        try {
-            event.setEventID(id);
-        }
-        catch (Exception e){
-            //alert();
+        int id1 = event.getEventID();
+        if (event.getEventID() == -1) {
+            int id = (datasource.countEvents() + 1) * 100;
+            try {
+                event.setEventID(id);
+            } catch (Exception e) {
+                //alert();
+            }
         }
 
         //Über das update des Events die lokale Persisierung anstoßen
-        datasource.createEvent(event);
+        handler.updateEvent(event);
         Intent intent = new Intent(EditSession.this, MyEvents.class);
         startActivity(intent);
     }
+
+    /**
+     *Test auf richtige Eingabe der verschiedenen Parameter über die Eingabefelder
+     *Zunächst Prüfung auf korrekte Angabe der Daten
+     *@exception : falls eines der Daten fehlt oder das Datum in einem falschen Format eingegeben wurde.
+     *
+     *@return session: wenn alles korrekt ist.
+     * Anschließend über Erzeugung einer Veranstaltung die Prüfung ob die restlichen Parameter korrekt eingegeben wurden.
+     */
     private Session saveSession(){
         Session session;
         try {
@@ -250,6 +262,11 @@ public class EditSession extends AppCompatActivity {
         android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
 
         // show it
-        alertDialog.show();
+        try {
+            alertDialog.show();
+        }
+        catch (Exception e){
+
+        }
     }
 }

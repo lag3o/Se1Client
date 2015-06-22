@@ -52,6 +52,7 @@ public class EventsViewAdapter extends BaseAdapter{
         }
 
 
+    //Generiert die Veranstaltungsübersicht aus den entsprechenden Veranstaltungsdaten und setzt die Hintergrundfarbe abwechselnd standard und heller
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 // TODO Auto-generated method stub

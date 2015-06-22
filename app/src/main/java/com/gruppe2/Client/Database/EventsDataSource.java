@@ -40,6 +40,7 @@ public class EventsDataSource {
         dbHelper.close();
     }
 
+    //FÜgt eine Veranstaltung der Datenbank hinzu (inkl. n Terminen)
     public void createEvent(Event event) {
        // try {
             ContentValues values = new ContentValues();
@@ -59,7 +60,7 @@ public class EventsDataSource {
         }*/
     }
 
-
+    // Fügt einen Termin hinzu
     private void createSession(Session session, long eventId) {
         try {
             ContentValues values = new ContentValues();
@@ -82,7 +83,7 @@ public class EventsDataSource {
             Log.i("createSession-Database", e.toString());
         }
     }
-
+    //Löscht eine Veranstaltung aus der Datenbank
     public void deleteEvent(Event event) {
         try {
             long id = event.getEventID();
@@ -98,6 +99,7 @@ public class EventsDataSource {
         }
     }
 
+    //Ermittelt alle belegten Veranstaltungen un gibt die Daten aufbereitete zurück
     public ArrayList<Event> getAllNames() {
         ArrayList<Event> events = new ArrayList<Event>();
         Cursor cursor;
@@ -129,8 +131,40 @@ public class EventsDataSource {
         return events;
     }
 
+    // Ermittelt alle Pushnachrichten einer Veranstaltung und gibt diese aufbereitet zurück
+    public ArrayList<String> getMessages(int id){
+        ArrayList<String> messages = new ArrayList<String>();
+        try {
+            Cursor cursor = database.rawQuery("Select * FROM " + MySQLiteHelper.TABLE_MESSAGES + " WHERE " +
+                    MySQLiteHelper.EVENT_ID + " = " + id + " Order by " + MySQLiteHelper.MESSAGE_DATE, null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                messages.add(cursor.getString(2));
+                cursor.moveToNext();
+            }
 
+            cursor.close();
+        }
+        catch (Exception e){
+            Log.d("getMessages", e.toString());
+        }
+        return messages;
+    }
+    //Speichert eine PushNachricht ab
+    public void createMessage(String message, int id){
+        try {
+            ContentValues values = new ContentValues();
+            values.put(MySQLiteHelper.EVENT_ID, id);
+            values.put(MySQLiteHelper.MESSAGE_MSG, message);
 
+            database.insert(MySQLiteHelper.TABLE_MESSAGES, null,
+                    values);
+        }
+        catch (Exception e){
+            Log.i("createMessage-Database", e.toString());
+        }
+    }
+    //Ermittelt alle Termine und gibt diese aufbereitet zurück
     public ArrayList<Session> getSessions(int id){
         ArrayList<Session> sessions = new ArrayList<Session>();
         try {
@@ -151,7 +185,7 @@ public class EventsDataSource {
         return sessions;
     }
 
-
+    //Prüft ob die Datenbank leer ist
     public boolean isEmpty(){
         try {
             Cursor cursor = database.rawQuery("Select Count(*) FROM " + MySQLiteHelper.TABLE_EVENTS, null);
@@ -168,6 +202,7 @@ public class EventsDataSource {
         }
         return true;
     }
+    //Zählt alle Datensätze und gibt die Anzahl zurück
     public int countEvents(){
         int i = 0;
         try {
@@ -181,6 +216,7 @@ public class EventsDataSource {
         }
         return i;
     }
+    //Fragt ein bestimmtes Veranstaltungsobjekt ab und gibt dieses zurück (inkl. Termine)
     public Event getEvent(int id){
         Event event;
         try {
@@ -197,16 +233,17 @@ public class EventsDataSource {
         }
         return event;
     }
+    //Prüft ob eine belegte Veranstaltung zur Zeit stattfindet
     public Integer isActive(){
         try {
             Cursor cursor = database.rawQuery("Select * FROM " + MySQLiteHelper.TABLE_EVENTS, null);
             cursor.moveToFirst();
             Date date = new Date();
-            Date date2 = (new Parser().StringToDate(cursor.getString(2)));
-            Date date3 = (new Parser().StringToDate(cursor.getString(3)));
             boolean b = date.compareTo((new Parser().StringToDate(cursor.getString(2)))) >= 0;
             boolean b2 = date.compareTo((new Parser().StringToDate(cursor.getString(3)))) <= 0;
-            if (!cursor.isAfterLast()) {
+            while (!cursor.isAfterLast()) {
+                Date date2 = (new Parser().StringToDate(cursor.getString(2)));
+                Date date3 = (new Parser().StringToDate(cursor.getString(3)));
                 if (date.compareTo((new Parser().StringToDate(cursor.getString(2)))) >= 0
                         && date.compareTo((new Parser().StringToDate(cursor.getString(3)))) <= 0) {
 
@@ -214,6 +251,7 @@ public class EventsDataSource {
                     cursor.close();
                     return i;
                 }
+                cursor.moveToNext();
             }
 
             cursor.close();
@@ -223,6 +261,7 @@ public class EventsDataSource {
         }
         return null;
     }
+    //Wandelt ein Cursor Objekt in ein Veranstaltungsobjekt um
     private Event cursorToEvent(Cursor cursor) {
         Event event = new Event();
         try {
@@ -238,6 +277,7 @@ public class EventsDataSource {
         }
         return event;
     }
+    //Wandelt ein Cursor Objekt in ein Terminobjekt um
     private Session cursorToSession(Cursor cursor){
         Session session = new Session();
         try {

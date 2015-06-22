@@ -20,7 +20,7 @@ public class SOAPDropEvent extends AsyncTask<String, Void, Void> {
 
     }
     protected Void doInBackground(String... params) {
-        new DataHelper().getEvent(handler);
+        new DataHelper().getEvent(handler, handler.getEvent().getEventID());
         return null;
     }
     protected void onPostExecute(Void result) {

@@ -16,8 +16,10 @@ import com.gruppe2.Client.Database.ApplicationHandler;
 import com.gruppe2.Client.Database.EventsDataSource;
 import com.gruppe2.Client.Helper.EventsViewAdapter;
 import com.gruppe2.Client.Objects.Event;
+import com.gruppe2.Client.SOAP.SOAPEvent;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
 Diese Klasse zeigt eine Ansicht aller bereits belegten Veranstaltungen
@@ -71,6 +73,7 @@ public class MyEvents extends AppCompatActivity {
                 Bundle b = new Bundle();
                 b.putInt("ID", events.get(position).getEventID()); //Your id
                 intent.putExtras(b); //Put your id to your next Intent
+                handler.resetEvent();
                 startActivity(intent);
             }
 

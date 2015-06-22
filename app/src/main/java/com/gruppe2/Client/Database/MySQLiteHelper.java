@@ -27,6 +27,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String SESSION_DESCRIPTION ="description";
     public static final String SESSION_PLZ= "plz";
 
+    public static final String TABLE_MESSAGES = "messages";
+    public static final String MESSAGE_ID = "id";
+    public static final String MESSAGE_MSG = "message";
+    public static final String MESSAGE_DATE = "date";
+
     private static final String DATABASE_NAME = "event.db";
     private static final int DATABASE_VERSION = 1;
 
@@ -47,6 +52,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + " text not null," + SESSION_LOCATION
             + " text not null," + SESSION_PLZ
             + " text,"+ SESSION_DESCRIPTION + " text);";
+    private static final String DATABASE_MESSAGE = " create table "
+            + TABLE_MESSAGES+"(" + MESSAGE_ID
+            + " integer primary key autoincrement, " + EVENT_ID
+            + " text not null," + MESSAGE_MSG
+            + " text not null," + MESSAGE_DATE
+            + " timestamp)";
 
 
     public MySQLiteHelper(Context context) {
@@ -55,8 +66,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase database) {
+        //Erstellt die Datenbank mit entsprechenden Tabellen
         database.execSQL(DATABASE_EVENT);
         database.execSQL(DATABASE_SESSION);
+        database.execSQL(DATABASE_MESSAGE);
     }
 
     @Override
@@ -66,6 +79,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                         + newVersion + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SESSIONS);
+        db.execSQL("DROP TABLE IF EXISTS " + DATABASE_MESSAGE);
         onCreate(db);
     }
 

@@ -16,6 +16,6 @@ public class Constants {
     public static final String ID= "ID";
 
     public static final String NAMESPACE = "http://eventmanagement.management.de/";
-    public static final String URL = "http://seprojekt-fhmuenster.rhcloud.com/10_EventManagementSystem/EventManagement/ManagementWebService?wsdl";
+    public static final String URL = "http://seprojektapp-fhmuenster.rhcloud.com/10_EventManagementSystem/EventManagement/ManagementWebService?wsdl";
     public static final String SOAP_ACTION = "";
 }

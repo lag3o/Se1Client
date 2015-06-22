@@ -20,6 +20,7 @@ import com.gruppe2.Client.Database.ApplicationHandler;
 import com.gruppe2.Client.Helper.EventsViewAdapter;
 import com.gruppe2.Client.Helper.Parser;
 import com.gruppe2.Client.Objects.Event;
+import com.gruppe2.Client.SOAP.SOAPEvent;
 import com.gruppe2.Client.SOAP.SOAPEvents;
 
 import org.ksoap2.SoapEnvelope;
@@ -56,7 +57,7 @@ public class EventsList extends AppCompatActivity {
 
         handler = ((ApplicationHandler) getApplicationContext());
         handler.setEvents(new ArrayList<Event>());
-        //Verbindungsaufbau zur SQLite Datenbank
+        //Ruft die Veranstaltungen vom Server ab. Bei Fehler erscheint ein Popup.
         try {
             SOAPEvents task = new SOAPEvents(handler);
             task.execute().get(5000, TimeUnit.MILLISECONDS);
@@ -65,9 +66,9 @@ public class EventsList extends AppCompatActivity {
             alert();
         }
         events = handler.getEvents();
-
+        // Falls keine Veranstaltungen abgerufen werden konnten wird eine entsprechende Fehlermeldung ausgegeben.
         if (events.size() == 0) {
-            alert("Leider ist keine Internetverbindung möglich. Es tut uns Leid.");
+            alert("Leider ist keine Verbindung zum Server möglich. Es tut uns Leid.");
         }
         //Listview laden
 
@@ -117,6 +118,7 @@ public class EventsList extends AppCompatActivity {
                                 Bundle b = new Bundle();
                                 b.putInt("ID", EVENTID); //Your id
                                 intent.putExtras(b); //Put your id to your next Intent
+                                handler.resetEvent();
                                 startActivity(intent);
                             }
                         });
@@ -174,7 +176,7 @@ public class EventsList extends AppCompatActivity {
 
                 .setNeutralButton("Entschuldigung angenommen", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(EventsList.this, MainActivity.class);
+                        Intent intent = new Intent(EventsList.this, MyEvents.class);
                         startActivity(intent);
                     }
                 });
@@ -208,7 +210,12 @@ public class EventsList extends AppCompatActivity {
         android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
 
         // show it
-        alertDialog.show();
+        try {
+            alertDialog.show();
+        }
+        catch (Exception e){
+
+        }
     }
     @Override
     protected void onResume() {
